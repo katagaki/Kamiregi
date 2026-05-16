@@ -25,8 +25,16 @@ struct StockPill: View {
             return Style(background: .red.opacity(0.14), foreground: .red, labelKey: "pos.stock.sold_out")
         }
         if stock <= 10 {
-            return Style(background: .orange.opacity(0.16), foreground: .orange, labelKey: "pos.stock.remaining \(stock)")
+            return Style(
+                background: .orange.opacity(0.16),
+                foreground: .orange,
+                labelKey: "pos.stock.remaining \(stock)"
+            )
         }
-        return Style(background: .green.opacity(0.16), foreground: .green, labelKey: "pos.stock.remaining \(stock)")
+        return Style(
+            background: .green.opacity(0.16),
+            foreground: .green,
+            labelKey: "pos.stock.remaining \(stock)"
+        )
     }
 }

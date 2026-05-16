@@ -33,7 +33,7 @@ struct IPadTransactionsView: View {
                     }
 
                     Section("transactions.title") {
-                        ForEach(day.transactions.sorted(by: { $0.timestamp > $1.timestamp }), id: \.persistentModelID) { transaction in
+                        ForEach(sortedTransactions, id: \.persistentModelID) { transaction in
                             TransactionRow(transaction: transaction)
                         }
                     }
@@ -63,4 +63,8 @@ struct IPadTransactionsView: View {
 
     private var totalRevenue: Int { day.transactions.reduce(0) { $0 + $1.total } }
     private var totalItems: Int { day.transactions.reduce(0) { $0 + $1.itemCount } }
+
+    private var sortedTransactions: [SaleTransaction] {
+        day.transactions.sorted { $0.timestamp > $1.timestamp }
+    }
 }

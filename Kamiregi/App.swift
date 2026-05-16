@@ -13,7 +13,7 @@ struct KamiregiApp: App {
             TransactionLine.self,
             Reservation.self
         ])
-        // TODO: Re-enable iCloud/CloudKit sync.
+        // Future work - re-enable iCloud / CloudKit sync.
         //
         // The app's entitlements declare CloudKit, but the SwiftData schema
         // isn't CloudKit-compatible yet, so the store fails to load with:

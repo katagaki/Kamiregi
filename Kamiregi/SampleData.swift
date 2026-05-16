@@ -175,10 +175,22 @@ enum SampleData {
     }
 
     private static let reservationSeeds: [ReservationSeed] = [
-        ReservationSeed(name: "山田 こはる", handle: "@koharu_y", kind: .sns, note: "夏の終わりに ×2、海猫荘の夜 ×1", total: 3200, picked: false),
-        ReservationSeed(name: "佐藤 真央", handle: "mao.sato@…", kind: .mail, note: "残響レコード ×1、ステッカー全種", total: 1400, picked: true),
-        ReservationSeed(name: "Anna Müller", handle: "+49 30 …", kind: .tel, note: "新刊セット", total: 3000, picked: false),
-        ReservationSeed(name: "高橋 ゆず", handle: "@yuzu_dot", kind: .sns, note: "夏の終わりに ×1", total: 1200, picked: false)
+        ReservationSeed(
+            name: "山田 こはる", handle: "@koharu_y", kind: .sns,
+            note: "夏の終わりに ×2、海猫荘の夜 ×1", total: 3200, picked: false
+        ),
+        ReservationSeed(
+            name: "佐藤 真央", handle: "mao.sato@…", kind: .mail,
+            note: "残響レコード ×1、ステッカー全種", total: 1400, picked: true
+        ),
+        ReservationSeed(
+            name: "Anna Müller", handle: "+49 30 …", kind: .tel,
+            note: "新刊セット", total: 3000, picked: false
+        ),
+        ReservationSeed(
+            name: "高橋 ゆず", handle: "@yuzu_dot", kind: .sns,
+            note: "夏の終わりに ×1", total: 1200, picked: false
+        )
     ]
 
     private static func seedReservations(into day: EventDay, context: ModelContext) {
@@ -197,13 +209,25 @@ enum SampleData {
     }
 
     private static func seedPastEvents(context: ModelContext) {
-        let comitia149 = Event(name: "コミティア149", venue: "東京ビッグサイト", booth: "え-08a", colorHex: "#5A8DEE", isPastEvent: true)
+        let comitia149 = Event(
+            name: "コミティア149",
+            venue: "東京ビッグサイト",
+            booth: "え-08a",
+            colorHex: "#5A8DEE",
+            isPastEvent: true
+        )
         comitia149.createdAt = makeDate(year: 2026, month: 2, day: 11)
         let comitia149Day = EventDay(date: makeDate(year: 2026, month: 2, day: 11), label: "完了")
         comitia149.days = [comitia149Day]
         context.insert(comitia149)
 
-        let comiket106 = Event(name: "コミックマーケット106", venue: "東京ビッグサイト", booth: "東-A11b", colorHex: "#34C759", isPastEvent: true)
+        let comiket106 = Event(
+            name: "コミックマーケット106",
+            venue: "東京ビッグサイト",
+            booth: "東-A11b",
+            colorHex: "#34C759",
+            isPastEvent: true
+        )
         comiket106.createdAt = makeDate(year: 2025, month: 12, day: 30)
         let comiket106Day = EventDay(date: makeDate(year: 2025, month: 12, day: 30), label: "完了")
         comiket106.days = [comiket106Day]

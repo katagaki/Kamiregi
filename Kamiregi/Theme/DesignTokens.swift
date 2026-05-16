@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Brand tokens — only the things that aren't already covered by SwiftUI's
+// Brand tokens - only the things that aren't already covered by SwiftUI's
 // system-adaptive colors. Everything else (text, backgrounds, separators)
 // should use .primary / .secondary / Color(.systemGroupedBackground) etc.
 enum Brand {

@@ -91,5 +91,16 @@ struct EventsListView: View {
 
 #Preview {
     EventsListView()
-        .modelContainer(for: [Event.self, EventDay.self, InventoryItem.self, DailyStock.self, SaleTransaction.self, TransactionLine.self, Reservation.self], inMemory: true)
+        .modelContainer(
+            for: [
+                Event.self,
+                EventDay.self,
+                InventoryItem.self,
+                DailyStock.self,
+                SaleTransaction.self,
+                TransactionLine.self,
+                Reservation.self
+            ],
+            inMemory: true
+        )
 }
