@@ -1,0 +1,205 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:1.00000,0.78033,0.65320,1.00000",
+      "display-p3:0.90933,0.51965,0.29412,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 1
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.3
+      }
+    }
+  },
+  "groups" : [
+    {
+      "blur-material" : 0.25,
+      "hidden" : false,
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:0.99976,0.96952,0.80658,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:0.99976,0.59892,0.26433,1.00000"
+              }
+            }
+          ],
+          "image-name" : "Kamicut.008.png",
+          "name" : "Cloud 3",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -271.9999999999999,
+              21.333333333333456
+            ]
+          }
+        },
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:1.00000,0.94442,0.67961,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:1.00000,0.58164,0.23039,1.00000"
+              }
+            }
+          ],
+          "image-name" : "Kamicut.007.png",
+          "name" : "Cloud 2",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -263,
+              32.33333333333346
+            ]
+          }
+        },
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "linear-gradient" : [
+                  "display-p3:0.88680,0.78523,0.69756,1.00000",
+                  "srgb:1.00000,0.94528,0.72603,1.00000"
+                ],
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.42319490557836925,
+                    "y" : 0.1802096153175136
+                  },
+                  "stop" : {
+                    "x" : 0.6590099589149162,
+                    "y" : 0.8244230902590122
+                  }
+                }
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "linear-gradient" : [
+                  "display-p3:0.88260,0.69291,0.69291,1.00000",
+                  "srgb:1.00000,0.60047,0.15043,1.00000"
+                ],
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.46583582303065624,
+                    "y" : 0.2011714361702438
+                  },
+                  "stop" : {
+                    "x" : 0.5724595672122115,
+                    "y" : 0.7284824493311548
+                  }
+                }
+              }
+            }
+          ],
+          "image-name" : "Kamicut.006.png",
+          "name" : "Cloud 1"
+        }
+      ],
+      "name" : "Cloud 1",
+      "position" : {
+        "scale" : 0.9,
+        "translation-in-points" : [
+          0,
+          -264
+        ]
+      },
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 1
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.7
+      }
+    },
+    {
+      "blur-material" : 0.6,
+      "layers" : [
+        {
+          "fill" : {
+            "automatic-gradient" : "display-p3:0.84305,0.84305,0.84305,1.00000"
+          },
+          "image-name" : "regi-layer.png",
+          "name" : "regi-layer"
+        }
+      ],
+      "name" : "Table",
+      "position" : {
+        "scale" : 0.96,
+        "translation-in-points" : [
+          0,
+          43
+        ]
+      },
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 1
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.75
+      }
+    },
+    {
+      "blur-material" : 1,
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "srgb:0.22213,0.17423,0.08336,1.00000"
+          },
+          "image-name" : "regi-front.png",
+          "name" : "regi-front"
+        },
+        {
+          "fill" : {
+            "solid" : "srgb:0.22213,0.17423,0.08336,1.00000"
+          },
+          "image-name" : "regi-back.png",
+          "name" : "regi-back"
+        }
+      ],
+      "lighting" : "individual",
+      "name" : "Table Legs",
+      "position" : {
+        "scale" : 0.96,
+        "translation-in-points" : [
+          0,
+          43
+        ]
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 1
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
