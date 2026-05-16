@@ -31,7 +31,7 @@ struct BreakdownRow: View {
                     .foregroundStyle(.secondary)
             }
             ProgressView(value: percent)
-                .tint(oos ? .red : UC.tint)
+                .tint(oos ? .red : Brand.tint)
         }
         .padding(.vertical, 2)
     }

@@ -30,7 +30,7 @@ struct CartSheet: View {
                                 Text(yen(cart.subtotal))
                                     .font(.title2.weight(.bold))
                                     .monospacedDigit()
-                                    .foregroundStyle(UC.tint)
+                                    .foregroundStyle(Brand.tint)
                             }
                         }
                     }

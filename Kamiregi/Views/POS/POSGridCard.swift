@@ -30,7 +30,7 @@ struct POSGridCard: View {
                         Spacer()
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
-                            .foregroundStyle(oos ? Color.secondary : UC.tint)
+                            .foregroundStyle(oos ? Color.secondary : Brand.tint)
                     }
                 }
                 .padding(10)

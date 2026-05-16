@@ -48,7 +48,7 @@ struct ConfirmedSheet: View {
                     LabeledContent("payment.change") {
                         Text(yen(transaction.change))
                             .monospacedDigit()
-                            .foregroundStyle(UC.tint)
+                            .foregroundStyle(Brand.tint)
                             .fontWeight(.semibold)
                     }
                 }
@@ -70,7 +70,7 @@ struct ConfirmedSheet: View {
     }
 
     private var timeLabel: String {
-        let f = DateFormatter(); f.dateFormat = "HH:mm"
-        return "#\(String(format: "%03d", transaction.number)) · \(f.string(from: transaction.timestamp))"
+        let formatter = DateFormatter(); formatter.dateFormat = "HH:mm"
+        return "#\(String(format: "%03d", transaction.number)) · \(formatter.string(from: transaction.timestamp))"
     }
 }

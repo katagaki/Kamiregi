@@ -30,10 +30,10 @@ struct POSView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Picker("pos.view.display", selection: $isGrid) {
-                    Image(systemName: "square.grid.2x2").tag(true)
-                    Image(systemName: "list.bullet").tag(false)
+                    Label("pos.view.grid", systemImage: "square.grid.2x2").tag(true)
+                    Label("pos.view.list", systemImage: "list.bullet").tag(false)
                 }
-                .pickerStyle(.segmented)
+                .pickerStyle(.inline)
             }
         }
         .sheet(isPresented: $showCart) {
@@ -56,8 +56,8 @@ struct POSView: View {
     private var filteredItems: [InventoryItem] {
         let items = event.items.sorted(by: { $0.sortIndex < $1.sortIndex })
         guard !searchText.isEmpty else { return items }
-        let q = searchText.lowercased()
-        return items.filter { $0.name.lowercased().contains(q) || $0.sub.lowercased().contains(q) }
+        let query = searchText.lowercased()
+        return items.filter { $0.name.lowercased().contains(query) || $0.sub.lowercased().contains(query) }
     }
 
     private var gridContent: some View {

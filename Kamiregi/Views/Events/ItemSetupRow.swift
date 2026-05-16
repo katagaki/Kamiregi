@@ -38,10 +38,10 @@ struct ItemSetupRow: View {
                 if let stock = item.stock(on: day) {
                     stock.initial = newValue
                 } else {
-                    let s = DailyStock(initial: newValue)
-                    s.item = item
-                    s.day = day
-                    context.insert(s)
+                    let stock = DailyStock(initial: newValue)
+                    stock.item = item
+                    stock.day = day
+                    context.insert(stock)
                 }
             }
         )

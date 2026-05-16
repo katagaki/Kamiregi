@@ -20,7 +20,7 @@ struct IPadTransactionsView: View {
                             Text(yen(totalRevenue))
                                 .font(.title3.weight(.bold))
                                 .monospacedDigit()
-                                .foregroundStyle(UC.tint)
+                                .foregroundStyle(Brand.tint)
                         }
                         LabeledContent("event.detail.transactions") {
                             Text("\(day.transactions.count)").monospacedDigit()
@@ -33,8 +33,8 @@ struct IPadTransactionsView: View {
                     }
 
                     Section("transactions.title") {
-                        ForEach(day.transactions.sorted(by: { $0.timestamp > $1.timestamp }), id: \.persistentModelID) { tx in
-                            TransactionRow(tx: tx)
+                        ForEach(day.transactions.sorted(by: { $0.timestamp > $1.timestamp }), id: \.persistentModelID) { transaction in
+                            TransactionRow(transaction: transaction)
                         }
                     }
                 }

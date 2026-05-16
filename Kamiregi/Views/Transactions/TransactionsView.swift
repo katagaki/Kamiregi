@@ -21,7 +21,7 @@ struct TransactionsView: View {
                             Text(yen(totalRevenue))
                                 .font(.title3.weight(.bold))
                                 .monospacedDigit()
-                                .foregroundStyle(UC.tint)
+                                .foregroundStyle(Brand.tint)
                         }
                         LabeledContent("event.detail.transactions") {
                             Text("\(day.transactions.count)").monospacedDigit()
@@ -34,9 +34,9 @@ struct TransactionsView: View {
                     }
 
                     Section("transactions.title") {
-                        ForEach(filteredTransactions, id: \.persistentModelID) { tx in
-                            NavigationLink(value: tx.persistentModelID) {
-                                TransactionRow(tx: tx)
+                        ForEach(filteredTransactions, id: \.persistentModelID) { transaction in
+                            NavigationLink(value: transaction.persistentModelID) {
+                                TransactionRow(transaction: transaction)
                             }
                         }
                     }
@@ -71,10 +71,10 @@ struct TransactionsView: View {
     private var filteredTransactions: [SaleTransaction] {
         let txs = day.transactions.sorted { $0.timestamp > $1.timestamp }
         guard !searchText.isEmpty else { return txs }
-        let q = searchText.lowercased()
-        return txs.filter { tx in
-            tx.lines.contains { $0.itemName.lowercased().contains(q) }
-                || "#\(tx.number)".contains(q)
+        let query = searchText.lowercased()
+        return txs.filter { transaction in
+            transaction.lines.contains { $0.itemName.lowercased().contains(query) }
+                || "#\(transaction.number)".contains(query)
         }
     }
 }

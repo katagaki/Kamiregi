@@ -43,7 +43,7 @@ struct ReservationRow: View {
                     .foregroundStyle(res.pickedUp ? .secondary : .primary)
                 Toggle("", isOn: $res.pickedUp)
                     .labelsHidden()
-                    .tint(UC.tint)
+                    .tint(Brand.tint)
             }
         }
         .padding(.vertical, 2)

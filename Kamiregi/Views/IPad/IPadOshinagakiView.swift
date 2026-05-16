@@ -59,7 +59,7 @@ struct IPadOshinagakiView: View {
             Text("pos.oos.message")
         }
         .sheet(isPresented: $showEdit) {
-            OshinagakiEditView(regions: regions)
+            OshinagakiEditView(event: event, day: day)
         }
         .sheet(isPresented: $showPayment) {
             PaymentSheet(cart: cart, event: event, day: day) { showPayment = false }
@@ -69,31 +69,18 @@ struct IPadOshinagakiView: View {
         }
     }
 
-    private var regions: [TapRegion] {
-        let items = event.items.sorted(by: { $0.sortIndex < $1.sortIndex })
-        let layout: [CGRect] = [
-            CGRect(x: 0.06, y: 0.08, width: 0.40, height: 0.30),
-            CGRect(x: 0.52, y: 0.08, width: 0.40, height: 0.30),
-            CGRect(x: 0.06, y: 0.42, width: 0.40, height: 0.22),
-            CGRect(x: 0.52, y: 0.42, width: 0.19, height: 0.22),
-            CGRect(x: 0.73, y: 0.42, width: 0.19, height: 0.22),
-            CGRect(x: 0.06, y: 0.70, width: 0.28, height: 0.22),
-            CGRect(x: 0.38, y: 0.70, width: 0.26, height: 0.22),
-            CGRect(x: 0.68, y: 0.70, width: 0.24, height: 0.22),
-        ]
-        return zip(items.prefix(layout.count), layout).map { item, rect in
-            TapRegion(
-                id: item.id, name: item.name, emoji: item.emoji,
-                price: item.price, stock: item.stock(on: day)?.remaining ?? 0,
-                color: item.swatch, rect: rect
-            )
-        }
-    }
-
     private var main: some View {
         ScrollView {
             HStack {
-                Spacer(); OshinagakiCanvas(regions: regions, onTap: handleTap).frame(maxWidth: 540); Spacer()
+                Spacer()
+                OshinagakiCanvas(
+                    imageData: event.oshinagakiImage,
+                    items: event.items,
+                    day: day,
+                    onTap: handleTap
+                )
+                .frame(maxWidth: 540)
+                Spacer()
             }
             .padding(20)
         }
@@ -118,7 +105,7 @@ struct IPadOshinagakiView: View {
                                 Text(yen(cart.subtotal))
                                     .font(.title2.weight(.bold))
                                     .monospacedDigit()
-                                    .foregroundStyle(UC.tint)
+                                    .foregroundStyle(Brand.tint)
                             }
                         }
                     }
@@ -139,8 +126,7 @@ struct IPadOshinagakiView: View {
         }
     }
 
-    private func handleTap(_ region: TapRegion) {
-        guard let item = event.items.first(where: { $0.id == region.id }) else { return }
+    private func handleTap(_ item: InventoryItem) {
         let remaining = item.stock(on: day)?.remaining ?? 0
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }

@@ -11,6 +11,7 @@ final class Event {
     var colorHex: String = "#FF5A4E"
     var createdAt: Date = Date()
     var isPastEvent: Bool = false
+    @Attribute(.externalStorage) var oshinagakiImage: Data?
 
     @Relationship(deleteRule: .cascade, inverse: \EventDay.event)
     var days: [EventDay] = []

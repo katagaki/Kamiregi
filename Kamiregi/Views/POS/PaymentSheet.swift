@@ -49,7 +49,7 @@ struct PaymentSheet: View {
                                     .padding(.vertical, 8)
                             }
                             .buttonStyle(.bordered)
-                            .tint(paid == amount ? UC.tint : .secondary)
+                            .tint(paid == amount ? Brand.tint : .secondary)
                         }
                     }
                     .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
@@ -60,7 +60,7 @@ struct PaymentSheet: View {
                         Text(yen(change))
                             .font(.largeTitle.weight(.bold))
                             .monospacedDigit()
-                            .foregroundStyle(UC.tint)
+                            .foregroundStyle(Brand.tint)
                     }
                 }
             }
@@ -82,8 +82,8 @@ struct PaymentSheet: View {
                 }
             }
             .sheet(isPresented: $showConfirmed) {
-                if let tx = confirmedTx {
-                    ConfirmedSheet(transaction: tx, paid: paid) {
+                if let transaction = confirmedTx {
+                    ConfirmedSheet(transaction: transaction, paid: paid) {
                         showConfirmed = false
                         confirmedTx = nil
                         cart.clear()
@@ -97,19 +97,19 @@ struct PaymentSheet: View {
 
     private func confirm() {
         guard paid >= cart.subtotal else { return }
-        let tx = SaleTransaction(
+        let transaction = SaleTransaction(
             number: cart.transactionNumber,
             timestamp: Date(),
             total: cart.subtotal,
             paid: paid
         )
-        tx.day = day
+        transaction.day = day
         for line in cart.lines {
-            let l = TransactionLine(itemName: line.name, qty: line.qty, unitPrice: line.price)
-            tx.lines.append(l)
-            context.insert(l)
+            let txLine = TransactionLine(itemName: line.name, qty: line.qty, unitPrice: line.price)
+            transaction.lines.append(txLine)
+            context.insert(txLine)
         }
-        context.insert(tx)
+        context.insert(transaction)
         for line in cart.lines {
             if let id = line.itemID,
                let item = event.items.first(where: { $0.persistentModelID == id }),
@@ -119,7 +119,7 @@ struct PaymentSheet: View {
         }
         try? context.save()
         cart.transactionNumber += 1
-        confirmedTx = tx
+        confirmedTx = transaction
         showConfirmed = true
     }
 }

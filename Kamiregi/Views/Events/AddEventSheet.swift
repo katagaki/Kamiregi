@@ -8,10 +8,10 @@ struct AddEventSheet: View {
     @State private var name: String = "コミティア150"
     @State private var venue: String = "東京ビッグサイト"
     @State private var booth: String = "え-21b"
-    @State private var selectedColor: String = UC.paletteSwatches[0]
+    @State private var selectedColor: String = Brand.paletteSwatches[0]
     @State private var draftDays: [DraftDay] = [
-        DraftDay(date: Self.date(2026, 5, 5), label: "初日"),
-        DraftDay(date: Self.date(2026, 5, 6), label: "2日目"),
+        DraftDay(date: Self.date(year: 2026, month: 5, day: 5), label: "初日"),
+        DraftDay(date: Self.date(year: 2026, month: 5, day: 6), label: "2日目")
     ]
 
     var body: some View {
@@ -47,7 +47,7 @@ struct AddEventSheet: View {
                 }
                 Section("event.add.color") {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 8), spacing: 12) {
-                        ForEach(UC.paletteSwatches, id: \.self) { hex in
+                        ForEach(Brand.paletteSwatches, id: \.self) { hex in
                             Button {
                                 selectedColor = hex
                             } label: {
@@ -92,8 +92,8 @@ struct AddEventSheet: View {
         dismiss()
     }
 
-    private static func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
-        Calendar.current.date(from: DateComponents(year: y, month: m, day: d)) ?? Date()
+    private static func date(year: Int, month: Int, day: Int) -> Date {
+        Calendar.current.date(from: DateComponents(year: year, month: month, day: day)) ?? Date()
     }
 }
 

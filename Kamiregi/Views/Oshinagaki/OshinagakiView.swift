@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct OshinagakiView: View {
-    @Environment(\.modelContext) private var context
     @Bindable var event: Event
     @Bindable var day: EventDay
     @State private var showEdit = false
@@ -11,16 +10,24 @@ struct OshinagakiView: View {
     @State private var showCart = false
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                OshinagakiCanvas(regions: regions, onTap: handleTap)
-                    .padding(.horizontal, 16)
-
-                fileBanner
-                    .padding(.horizontal, 16)
+        Group {
+            if event.oshinagakiImage == nil && event.items.allSatisfy({ !$0.hasRegion }) {
+                emptyState
+            } else {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        OshinagakiCanvas(
+                            imageData: event.oshinagakiImage,
+                            items: event.items,
+                            day: day,
+                            onTap: handleTap
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                    .padding(.top, 12)
+                    .padding(.bottom, 120)
+                }
             }
-            .padding(.top, 12)
-            .padding(.bottom, 120)
         }
         .background(Color(.systemGroupedBackground))
         .safeAreaInset(edge: .bottom) {
@@ -34,17 +41,9 @@ struct OshinagakiView: View {
                     Label("common.edit", systemImage: "pencil")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button("oshinagaki.edit.image.change", systemImage: "photo") { }
-                    Button("oshinagaki.edit.clear", systemImage: "trash", role: .destructive) { }
-                } label: {
-                    Image(systemName: "ellipsis")
-                }
-            }
         }
         .sheet(isPresented: $showEdit) {
-            OshinagakiEditView(regions: regions)
+            OshinagakiEditView(event: event, day: day)
         }
         .sheet(isPresented: $showCart) {
             CartSheet(cart: cart, event: event, day: day)
@@ -63,36 +62,20 @@ struct OshinagakiView: View {
         }
     }
 
-    private var regions: [TapRegion] {
-        let items = event.items.sorted(by: { $0.sortIndex < $1.sortIndex })
-        let layout: [CGRect] = [
-            CGRect(x: 0.06, y: 0.08, width: 0.40, height: 0.30),
-            CGRect(x: 0.52, y: 0.08, width: 0.40, height: 0.30),
-            CGRect(x: 0.06, y: 0.42, width: 0.40, height: 0.22),
-            CGRect(x: 0.52, y: 0.42, width: 0.19, height: 0.22),
-            CGRect(x: 0.73, y: 0.42, width: 0.19, height: 0.22),
-            CGRect(x: 0.06, y: 0.70, width: 0.28, height: 0.22),
-            CGRect(x: 0.38, y: 0.70, width: 0.26, height: 0.22),
-            CGRect(x: 0.68, y: 0.70, width: 0.24, height: 0.22),
-        ]
-        return zip(items.prefix(layout.count), layout).map { item, rect in
-            TapRegion(
-                id: item.id, name: item.name, emoji: item.emoji,
-                price: item.price, stock: item.stock(on: day)?.remaining ?? 0,
-                color: item.swatch, rect: rect
-            )
+    private var emptyState: some View {
+        ContentUnavailableView {
+            Label("oshinagaki.empty.title", systemImage: "photo.on.rectangle.angled")
+        } description: {
+            Text("oshinagaki.empty.description")
+        } actions: {
+            Button { showEdit = true } label: {
+                Label("oshinagaki.empty.action", systemImage: "pencil")
+            }
+            .buttonStyle(.borderedProminent)
         }
     }
 
-    private var fileBanner: some View {
-        GroupBox {
-            Label("\(event.name)_\(String(localized: "oshinagaki.title")).png", systemImage: "photo")
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
-    private func handleTap(_ region: TapRegion) {
-        guard let item = event.items.first(where: { $0.id == region.id }) else { return }
+    private func handleTap(_ item: InventoryItem) {
         let remaining = item.stock(on: day)?.remaining ?? 0
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }

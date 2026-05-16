@@ -11,8 +11,8 @@ struct ItemsSetupView: View {
         Form {
             Section {
                 Picker("items.day", selection: $selectedDayID) {
-                    ForEach(event.sortedDays, id: \.persistentModelID) { d in
-                        Text(d.label).tag(d.persistentModelID as PersistentIdentifier?)
+                    ForEach(event.sortedDays, id: \.persistentModelID) { dayEntry in
+                        Text(dayEntry.label).tag(dayEntry.persistentModelID as PersistentIdentifier?)
                     }
                 }
                 .pickerStyle(.segmented)

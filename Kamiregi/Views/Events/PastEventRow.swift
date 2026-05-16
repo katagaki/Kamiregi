@@ -19,10 +19,10 @@ struct PastEventRow: View {
     }
 
     private var dateText: String {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy年M月"
-        f.locale = Locale(identifier: "ja_JP")
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy年M月"
+        formatter.locale = Locale(identifier: "ja_JP")
         let day = event.sortedDays.first?.date ?? Date()
-        return "\(f.string(from: day)) · 完了"
+        return "\(formatter.string(from: day)) · 完了"
     }
 }

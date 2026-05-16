@@ -26,9 +26,9 @@ struct AddReservationSheet: View {
 
                 Section {
                     Picker("reservation.add.contact.method", selection: $contact) {
-                        Label("reservation.contact.sns",  systemImage: "at").tag(ContactKind.sns)
+                        Label("reservation.contact.sns", systemImage: "at").tag(ContactKind.sns)
                         Label("reservation.contact.mail", systemImage: "envelope").tag(ContactKind.mail)
-                        Label("reservation.contact.tel",  systemImage: "phone").tag(ContactKind.tel)
+                        Label("reservation.contact.tel", systemImage: "phone").tag(ContactKind.tel)
                     }
                     .pickerStyle(.menu)
                     TextField(contactPlaceholder, text: $handle)

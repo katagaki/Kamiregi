@@ -8,10 +8,10 @@ struct Avatar: View {
     private static let foreground = ["#C7372A", "#1F5AA6", "#1E8A38", "#A07300", "#6A3FB0", "#B43374", "#9C5F00"]
 
     var body: some View {
-        let ch = String(name.trimmingCharacters(in: .whitespaces).first ?? "?")
+        let initial = String(name.trimmingCharacters(in: .whitespaces).first ?? "?")
         let idx = abs(Int(name.unicodeScalars.first?.value ?? 0)) % Self.palette.count
         ZStack(alignment: .bottomTrailing) {
-            Text(ch)
+            Text(initial)
                 .font(.body.weight(.bold))
                 .foregroundStyle(Color(hex: Self.foreground[idx]))
                 .frame(width: 44, height: 44)

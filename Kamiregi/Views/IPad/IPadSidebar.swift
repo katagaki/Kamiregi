@@ -32,7 +32,7 @@ struct IPadSidebar: View {
                                     .fontWeight(section == row.id ? .semibold : .regular)
                             } icon: {
                                 Image(systemName: row.icon)
-                                    .foregroundStyle(section == row.id ? UC.tint : .secondary)
+                                    .foregroundStyle(section == row.id ? Brand.tint : .secondary)
                             }
                             .badge(row.badge ?? 0)
                         }
@@ -72,11 +72,11 @@ struct IPadSidebar: View {
 
     private var filteredEvents: [Event] {
         guard !searchText.isEmpty else { return events }
-        let q = searchText.lowercased()
+        let query = searchText.lowercased()
         return events.filter {
-            $0.name.lowercased().contains(q)
-                || $0.venue.lowercased().contains(q)
-                || $0.booth.lowercased().contains(q)
+            $0.name.lowercased().contains(query)
+                || $0.venue.lowercased().contains(query)
+                || $0.booth.lowercased().contains(query)
         }
     }
 
@@ -88,12 +88,14 @@ struct IPadSidebar: View {
     }
 
     private func subNavRows(for event: Event) -> [SubNavRow] {
-        [
-            SubNavRow(id: .pos,          labelKey: "event.detail.standard",       icon: "cart",     badge: nil),
-            SubNavRow(id: .oshinagaki,   labelKey: "event.detail.oshinagaki",     icon: "photo",    badge: nil),
-            SubNavRow(id: .items,        labelKey: "event.detail.items",          icon: "bag",      badge: event.items.count),
-            SubNavRow(id: .transactions, labelKey: "event.detail.transactions.list", icon: "doc.text", badge: activeDay?.transactions.count),
-            SubNavRow(id: .reservations, labelKey: "event.detail.reservations",   icon: "person.2", badge: activeDay?.reservations.count),
+        let txCount = activeDay?.transactions.count
+        let resCount = activeDay?.reservations.count
+        return [
+            SubNavRow(id: .pos, labelKey: "event.detail.standard", icon: "cart", badge: nil),
+            SubNavRow(id: .oshinagaki, labelKey: "event.detail.oshinagaki", icon: "photo", badge: nil),
+            SubNavRow(id: .items, labelKey: "event.detail.items", icon: "bag", badge: event.items.count),
+            SubNavRow(id: .transactions, labelKey: "event.detail.transactions.list", icon: "doc.text", badge: txCount),
+            SubNavRow(id: .reservations, labelKey: "event.detail.reservations", icon: "person.2", badge: resCount)
         ]
     }
 }

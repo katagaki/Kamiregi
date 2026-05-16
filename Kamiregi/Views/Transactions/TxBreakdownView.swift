@@ -20,7 +20,7 @@ struct TxBreakdownView: View {
                             Text(yen(day.revenue))
                                 .font(.title3.weight(.bold))
                                 .monospacedDigit()
-                                .foregroundStyle(UC.tint)
+                                .foregroundStyle(Brand.tint)
                         }
                         LabeledContent("transactions.items.sold") {
                             Text("\(day.soldCount)").monospacedDigit()

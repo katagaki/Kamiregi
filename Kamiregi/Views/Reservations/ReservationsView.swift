@@ -75,11 +75,11 @@ struct ReservationsView: View {
             }
         }()
         guard !searchText.isEmpty else { return scope }
-        let q = searchText.lowercased()
+        let query = searchText.lowercased()
         return scope.filter {
-            $0.name.lowercased().contains(q)
-                || $0.handle.lowercased().contains(q)
-                || $0.note.lowercased().contains(q)
+            $0.name.lowercased().contains(query)
+                || $0.handle.lowercased().contains(query)
+                || $0.note.lowercased().contains(query)
         }
     }
 }

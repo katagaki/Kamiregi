@@ -26,7 +26,7 @@ struct EventDetailView: View {
                     LabeledContent("event.detail.revenue") {
                         Text(yen(day.revenue))
                             .monospacedDigit()
-                            .foregroundStyle(UC.tint)
+                            .foregroundStyle(Brand.tint)
                             .fontWeight(.semibold)
                     }
                     LabeledContent("event.detail.transactions") {

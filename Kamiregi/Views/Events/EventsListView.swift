@@ -80,11 +80,11 @@ struct EventsListView: View {
 
     private func matchSearch(_ src: [Event]) -> [Event] {
         guard !searchText.isEmpty else { return src }
-        let q = searchText.lowercased()
+        let query = searchText.lowercased()
         return src.filter {
-            $0.name.lowercased().contains(q)
-                || $0.venue.lowercased().contains(q)
-                || $0.booth.lowercased().contains(q)
+            $0.name.lowercased().contains(query)
+                || $0.venue.lowercased().contains(query)
+                || $0.booth.lowercased().contains(query)
         }
     }
 }

@@ -30,7 +30,7 @@ struct POSListRow: View {
             Button(action: onAdd) {
                 Image(systemName: "plus.circle.fill")
                     .font(.title2)
-                    .foregroundStyle(oos ? Color.secondary : UC.tint)
+                    .foregroundStyle(oos ? Color.secondary : Brand.tint)
             }
             .buttonStyle(.borderless)
         }

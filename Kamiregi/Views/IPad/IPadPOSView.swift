@@ -36,11 +36,15 @@ struct IPadPOSView: View {
         .searchable(text: $searchText, prompt: Text("pos.search.prompt"))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Picker("pos.view.display", selection: $isGrid) {
-                    Image(systemName: "square.grid.2x2").tag(true)
-                    Image(systemName: "list.bullet").tag(false)
+                Menu {
+                    Picker("pos.view.display", selection: $isGrid) {
+                        Label("pos.view.grid", systemImage: "square.grid.2x2").tag(true)
+                        Label("pos.view.list", systemImage: "list.bullet").tag(false)
+                    }
+                    .pickerStyle(.inline)
+                } label: {
+                    Label("pos.view.display", systemImage: isGrid ? "square.grid.2x2" : "list.bullet")
                 }
-                .pickerStyle(.segmented)
             }
         }
         .alert(
@@ -66,8 +70,8 @@ struct IPadPOSView: View {
     private var filteredItems: [InventoryItem] {
         let items = event.items.sorted(by: { $0.sortIndex < $1.sortIndex })
         guard !searchText.isEmpty else { return items }
-        let q = searchText.lowercased()
-        return items.filter { $0.name.lowercased().contains(q) || $0.sub.lowercased().contains(q) }
+        let query = searchText.lowercased()
+        return items.filter { $0.name.lowercased().contains(query) || $0.sub.lowercased().contains(query) }
     }
 
     @ViewBuilder
@@ -110,7 +114,7 @@ struct IPadPOSView: View {
                                 Text(yen(cart.subtotal))
                                     .font(.title2.weight(.bold))
                                     .monospacedDigit()
-                                    .foregroundStyle(UC.tint)
+                                    .foregroundStyle(Brand.tint)
                             }
                         }
                     }
