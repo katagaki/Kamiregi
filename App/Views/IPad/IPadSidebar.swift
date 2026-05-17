@@ -42,7 +42,6 @@ struct IPadSidebar: View {
             }
         }
         .listStyle(.sidebar)
-        .navigationTitle("Ushio Cash")
         .searchable(text: $searchText, prompt: Text("common.search"))
         .onChange(of: selectedEventID) { _, newID in
             if let event = events.first(where: { $0.persistentModelID == newID }) {
@@ -50,6 +49,9 @@ struct IPadSidebar: View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SettingsMenu()
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button { showAddEvent = true } label: {
                     Label("events.add", systemImage: "plus")

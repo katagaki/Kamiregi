@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct KamiregiApp: App {
+struct KamicashApp: App {
     let sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Event.self,

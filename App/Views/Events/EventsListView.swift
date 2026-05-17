@@ -13,6 +13,9 @@ struct EventsListView: View {
                 .searchable(text: $searchText, prompt: Text("events.search.prompt"))
                 .toolbarTitleDisplayMode(.inlineLarge)
                 .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        SettingsMenu()
+                    }
                     DefaultToolbarItem(kind: .search, placement: .bottomBar)
                     ToolbarSpacer(.fixed, placement: .bottomBar)
                     ToolbarItemGroup(placement: .bottomBar) {
