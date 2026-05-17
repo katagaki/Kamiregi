@@ -10,10 +10,7 @@ struct CartLineRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text(line.emoji)
-                .font(.title2)
-                .frame(width: 44, height: 44)
-                .background(line.swatch, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            ItemThumbnail(name: line.name, photoData: line.photoData)
             VStack(alignment: .leading, spacing: 2) {
                 Text(line.name)
                     .font(.body.weight(.semibold))

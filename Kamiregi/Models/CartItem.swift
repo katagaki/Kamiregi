@@ -8,11 +8,9 @@ struct CartItem: Identifiable, Equatable {
     var name: String
     var sub: String
     var price: Int
-    var emoji: String
-    var swatchHex: String
+    var photoData: Data?
     var qty: Int
 
-    var swatch: Color { Color(hex: swatchHex) }
     var subtotal: Int { qty * price }
 
     static func == (lhs: CartItem, rhs: CartItem) -> Bool { lhs.id == rhs.id && lhs.qty == rhs.qty }
@@ -39,8 +37,7 @@ final class CartStore {
                     name: item.name,
                     sub: item.sub,
                     price: item.price,
-                    emoji: item.emoji,
-                    swatchHex: item.swatchHex,
+                    photoData: item.photoData,
                     qty: 1
                 )
             )

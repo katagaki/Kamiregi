@@ -9,8 +9,6 @@ enum SampleData {
         let price: Int
         let stock: Int
         let sold: Int
-        let emoji: String
-        let swatch: String
     }
 
     private struct TransactionLineSeed {
@@ -65,14 +63,14 @@ enum SampleData {
     }
 
     private static let comitiaItems: [ItemSeed] = [
-        ItemSeed(name: "夏の終わりに", sub: "B5新刊・100頁", price: 1200, stock: 60, sold: 18, emoji: "📕", swatch: "#FFE4DC"),
-        ItemSeed(name: "残響レコード", sub: "B5新刊・80頁", price: 1000, stock: 45, sold: 14, emoji: "📘", swatch: "#DFEEFF"),
-        ItemSeed(name: "海猫荘の夜", sub: "A5既刊・64頁", price: 800, stock: 26, sold: 8, emoji: "📗", swatch: "#E0F4E2"),
-        ItemSeed(name: "アクリルキーホルダー", sub: "4種 / 各", price: 600, stock: 82, sold: 22, emoji: "🔑", swatch: "#FFF4D6"),
-        ItemSeed(name: "缶バッジセット", sub: "3個セット", price: 500, stock: 24, sold: 24, emoji: "🟡", swatch: "#FFE2EE"),
-        ItemSeed(name: "ポストカード4種", sub: "4枚セット", price: 400, stock: 34, sold: 6, emoji: "✉️", swatch: "#EBE3FF"),
-        ItemSeed(name: "ステッカー", sub: "1枚", price: 200, stock: 100, sold: 12, emoji: "⭐", swatch: "#FFE9CF"),
-        ItemSeed(name: "おまけ無配", sub: "ペーパー", price: 0, stock: 80, sold: 30, emoji: "🎁", swatch: "#E6F4F1")
+        ItemSeed(name: "夏の終わりに", sub: "B5新刊・100頁", price: 1200, stock: 60, sold: 18),
+        ItemSeed(name: "残響レコード", sub: "B5新刊・80頁", price: 1000, stock: 45, sold: 14),
+        ItemSeed(name: "海猫荘の夜", sub: "A5既刊・64頁", price: 800, stock: 26, sold: 8),
+        ItemSeed(name: "アクリルキーホルダー", sub: "4種 / 各", price: 600, stock: 82, sold: 22),
+        ItemSeed(name: "缶バッジセット", sub: "3個セット", price: 500, stock: 24, sold: 24),
+        ItemSeed(name: "ポストカード4種", sub: "4枚セット", price: 400, stock: 34, sold: 6),
+        ItemSeed(name: "ステッカー", sub: "1枚", price: 200, stock: 100, sold: 12),
+        ItemSeed(name: "おまけ無配", sub: "ペーパー", price: 0, stock: 80, sold: 30)
     ]
 
     private static let regionLayout: [CGRect] = [
@@ -92,8 +90,6 @@ enum SampleData {
                 name: seed.name,
                 sub: seed.sub,
                 price: seed.price,
-                emoji: seed.emoji,
-                swatchHex: seed.swatch,
                 sortIndex: idx
             )
             if idx < regionLayout.count {

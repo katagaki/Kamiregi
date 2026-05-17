@@ -7,6 +7,7 @@ struct ItemsSetupView: View {
     @Bindable var day: EventDay
     @State private var selectedDayID: PersistentIdentifier?
     @State private var showAddItem = false
+    @State private var editingItem: InventoryItem?
     @State private var searchText = ""
 
     var body: some View {
@@ -23,7 +24,15 @@ struct ItemsSetupView: View {
 
             Section {
                 ForEach(filteredItems, id: \.id) { item in
-                    ItemSetupRow(item: item, day: activeDay)
+                    Button {
+                        editingItem = item
+                    } label: {
+                        ItemSetupRow(item: item, day: activeDay)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .onDelete { indexSet in
+                    for idx in indexSet { delete(filteredItems[idx]) }
                 }
                 Button {
                     showAddItem = true
@@ -57,6 +66,9 @@ struct ItemsSetupView: View {
         .sheet(isPresented: $showAddItem) {
             AddItemSheet(event: event)
         }
+        .sheet(item: $editingItem) { item in
+            EditItemSheet(item: item, day: activeDay)
+        }
         .onAppear {
             if selectedDayID == nil { selectedDayID = day.persistentModelID }
         }
@@ -77,6 +89,12 @@ struct ItemsSetupView: View {
         let sorted = event.sortedDays
         guard let idx = sorted.firstIndex(where: { $0.persistentModelID == activeDay.persistentModelID }) else { return false }
         return idx > 0
+    }
+
+    private func delete(_ item: InventoryItem) {
+        event.items.removeAll { $0.id == item.id }
+        context.delete(item)
+        try? context.save()
     }
 
     private func copyFromPreviousDay() {

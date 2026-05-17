@@ -7,7 +7,7 @@ struct OshinagakiView: View {
     @State private var showEdit = false
     @State private var oosItem: InventoryItem?
     @State private var cart = CartStore()
-    @State private var showCart = false
+    @State private var showPayment = false
 
     var body: some View {
         Group {
@@ -31,7 +31,7 @@ struct OshinagakiView: View {
         }
         .background(Color(.systemGroupedBackground))
         .safeAreaInset(edge: .bottom) {
-            POSCartBar(cart: cart) { showCart = true }
+            POSCartBar(cart: cart) { showPayment = true }
         }
         .navigationTitle("oshinagaki.title")
         .navigationBarTitleDisplayMode(.inline)
@@ -45,8 +45,8 @@ struct OshinagakiView: View {
         .sheet(isPresented: $showEdit) {
             OshinagakiEditView(event: event, day: day)
         }
-        .sheet(isPresented: $showCart) {
-            CartSheet(cart: cart, event: event, day: day)
+        .sheet(isPresented: $showPayment) {
+            PaymentSheet(cart: cart, event: event, day: day) { showPayment = false }
         }
         .alert(
             "pos.oos.title \(oosItem?.name ?? "")",

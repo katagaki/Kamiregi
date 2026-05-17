@@ -9,7 +9,7 @@ struct RegisterView: View {
     @Bindable var event: Event
     @Bindable var day: EventDay
     @State private var mode: RegisterMode = .grid
-    @State private var showCart = false
+    @State private var showPayment = false
     @State private var showEdit = false
     @State private var oosItem: InventoryItem?
     @State private var cart = CartStore()
@@ -28,7 +28,7 @@ struct RegisterView: View {
         }
         .background(Color(.systemGroupedBackground))
         .safeAreaInset(edge: .bottom) {
-            POSCartBar(cart: cart) { showCart = true }
+            POSCartBar(cart: cart) { showPayment = true }
         }
         .navigationTitle("pos.title")
         .navigationBarTitleDisplayMode(.inline)
@@ -50,8 +50,8 @@ struct RegisterView: View {
                 }
             }
         }
-        .sheet(isPresented: $showCart) {
-            CartSheet(cart: cart, event: event, day: day)
+        .sheet(isPresented: $showPayment) {
+            PaymentSheet(cart: cart, event: event, day: day) { showPayment = false }
         }
         .sheet(isPresented: $showEdit) {
             OshinagakiEditView(event: event, day: day)

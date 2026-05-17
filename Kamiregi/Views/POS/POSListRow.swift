@@ -9,10 +9,7 @@ struct POSListRow: View {
         let remaining = item.stock(on: day)?.remaining ?? 0
         let oos = remaining == 0
         HStack(spacing: 12) {
-            Text(item.emoji)
-                .font(.title2)
-                .frame(width: 44, height: 44)
-                .background(item.swatch, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            ItemThumbnail(name: item.name, photoData: item.photoData)
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
                     Text(item.name)

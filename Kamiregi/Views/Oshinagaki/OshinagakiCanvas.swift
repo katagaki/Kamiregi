@@ -67,17 +67,14 @@ private struct OshinagakiTapRegion: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .strokeBorder(strokeColor.opacity(0.6), lineWidth: 1.5)
                 VStack {
-                    HStack(spacing: 2) {
-                        Text(item.emoji)
-                        Text(item.name)
-                            .font(.caption2.weight(.semibold))
-                            .lineLimit(1)
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(oos ? Color.red : Brand.tint, in: Capsule())
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(item.name)
+                        .font(.caption2.weight(.semibold))
+                        .lineLimit(1)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(oos ? Color.red : Brand.tint, in: Capsule())
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     Spacer()
                     HStack(alignment: .bottom) {
                         Text(item.price > 0 ? yen(item.price) : String(localized: "items.free"))

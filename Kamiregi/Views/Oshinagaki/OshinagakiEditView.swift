@@ -73,16 +73,13 @@ struct OshinagakiEditView: View {
                         selectItem(item)
                     } label: {
                         VStack(spacing: 4) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(item.swatch)
-                                    .frame(width: 56, height: 56)
-                                    .overlay(Text(item.emoji).font(.title))
+                            ZStack(alignment: .bottomTrailing) {
+                                ItemThumbnail(name: item.name, photoData: item.photoData, size: 56, cornerRadius: 12)
                                 if item.hasRegion {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundStyle(.white, .green)
                                         .background(Color(.systemBackground), in: Circle())
-                                        .offset(x: 22, y: 22)
+                                        .offset(x: 4, y: 4)
                                 }
                             }
                             Text(item.name)
@@ -117,7 +114,6 @@ struct OshinagakiEditView: View {
 
     private func selectItem(_ item: InventoryItem) {
         if !item.hasRegion {
-            // Place a default centered region for this item.
             item.regionRect = CGRect(x: 0.35, y: 0.4, width: 0.30, height: 0.20)
         }
         selectedItemID = item.persistentModelID

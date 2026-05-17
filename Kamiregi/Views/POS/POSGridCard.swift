@@ -11,9 +11,10 @@ struct POSGridCard: View {
         Button(action: onAdd) {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .topTrailing) {
-                    Rectangle().fill(item.swatch)
-                        .overlay(Text(item.emoji).font(.system(size: 44)))
+                    itemBanner
+                        .frame(maxWidth: .infinity)
                         .frame(height: 96)
+                        .clipped()
                     StockPill(stock: remaining).padding(8)
                 }
                 VStack(alignment: .leading, spacing: 4) {
@@ -51,5 +52,22 @@ struct POSGridCard: View {
         }
         .buttonStyle(.plain)
         .disabled(false)
+    }
+
+    @ViewBuilder
+    private var itemBanner: some View {
+        if let data = item.photoData, let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+        } else {
+            let colors = ItemThumbnail.colors(for: item.name)
+            ZStack {
+                colors.bg
+                Text(String(item.name.trimmingCharacters(in: .whitespaces).first ?? "?"))
+                    .font(.system(size: 44, weight: .bold))
+                    .foregroundStyle(colors.fg)
+            }
+        }
     }
 }

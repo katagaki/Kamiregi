@@ -91,16 +91,13 @@ private struct OshinagakiEditableRegion: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(strokeColor, style: StrokeStyle(lineWidth: 2, dash: isSelected ? [] : [4, 3]))
 
-            HStack(spacing: 4) {
-                Text(item.emoji)
-                Text(item.name)
-                    .font(.caption2.weight(.semibold))
-                    .lineLimit(1)
-            }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
-            .background(Brand.tint, in: Capsule())
+            Text(item.name)
+                .font(.caption2.weight(.semibold))
+                .lineLimit(1)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Brand.tint, in: Capsule())
         }
         .frame(width: liveRect.width, height: liveRect.height)
         .position(x: liveRect.midX, y: liveRect.midY)

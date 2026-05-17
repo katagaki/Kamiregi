@@ -10,7 +10,6 @@ struct IPadOshinagakiView: View {
     @State private var oosItem: InventoryItem?
     @State private var showPayment = false
     @State private var showEdit = false
-    @State private var showCartSheet = false
     @State private var photosPick: PhotosPickerItem?
     @State private var showPhotoPicker = false
     @State private var showClearConfirm = false
@@ -27,7 +26,7 @@ struct IPadOshinagakiView: View {
             }
             .overlay(alignment: .bottomTrailing) {
                 if compact && cart.count > 0 {
-                    POSCartBar(cart: cart) { showCartSheet = true }
+                    POSCartBar(cart: cart) { showPayment = true }
                         .frame(maxWidth: 320)
                         .padding()
                 }
@@ -86,9 +85,6 @@ struct IPadOshinagakiView: View {
         }
         .sheet(isPresented: $showPayment) {
             PaymentSheet(cart: cart, event: event, day: day) { showPayment = false }
-        }
-        .sheet(isPresented: $showCartSheet) {
-            CartSheet(cart: cart, event: event, day: day)
         }
     }
 

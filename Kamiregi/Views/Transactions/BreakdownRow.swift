@@ -12,10 +12,7 @@ struct BreakdownRow: View {
 
         VStack(spacing: 8) {
             HStack(spacing: 12) {
-                Text(item.emoji)
-                    .font(.title3)
-                    .frame(width: 36, height: 36)
-                    .background(item.swatch, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                ItemThumbnail(name: item.name, photoData: item.photoData, size: 36, cornerRadius: 9)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.name)
                         .font(.subheadline.weight(.semibold))

@@ -10,7 +10,6 @@ struct IPadRegisterView: View {
     @State private var mode: RegisterMode = .grid
     @State private var oosItem: InventoryItem?
     @State private var showPayment = false
-    @State private var showCartSheet = false
     @State private var showEdit = false
     @State private var photosPick: PhotosPickerItem?
     @State private var showPhotoPicker = false
@@ -28,7 +27,7 @@ struct IPadRegisterView: View {
             }
             .overlay(alignment: .bottomTrailing) {
                 if compact && cart.count > 0 {
-                    POSCartBar(cart: cart) { showCartSheet = true }
+                    POSCartBar(cart: cart) { showPayment = true }
                         .frame(maxWidth: 320)
                         .padding()
                 }
@@ -98,9 +97,6 @@ struct IPadRegisterView: View {
         }
         .sheet(isPresented: $showPayment) {
             PaymentSheet(cart: cart, event: event, day: day) { showPayment = false }
-        }
-        .sheet(isPresented: $showCartSheet) {
-            CartSheet(cart: cart, event: event, day: day)
         }
     }
 

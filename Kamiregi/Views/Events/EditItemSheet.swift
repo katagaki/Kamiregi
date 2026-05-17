@@ -2,16 +2,28 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 
-struct AddItemSheet: View {
+struct EditItemSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
-    @Bindable var event: Event
+    @Bindable var item: InventoryItem
+    var day: EventDay
 
-    @State private var name: String = ""
-    @State private var sub: String = ""
-    @State private var price: Int = 0
+    @State private var name: String
+    @State private var sub: String
+    @State private var price: Int
     @State private var photoData: Data?
     @State private var photosPickerItem: PhotosPickerItem?
+    @State private var stockInitial: Int
+
+    init(item: InventoryItem, day: EventDay) {
+        self.item = item
+        self.day = day
+        _name = State(initialValue: item.name)
+        _sub = State(initialValue: item.sub)
+        _price = State(initialValue: item.price)
+        _photoData = State(initialValue: item.photoData)
+        _stockInitial = State(initialValue: item.stock(on: day)?.initial ?? 0)
+    }
 
     var body: some View {
         NavigationStack {
@@ -56,8 +68,13 @@ struct AddItemSheet: View {
                     TextField("0", value: $price, format: .number)
                         .keyboardType(.numberPad)
                 }
+
+                Section("item.edit.stock") {
+                    TextField("0", value: $stockInitial, format: .number)
+                        .keyboardType(.numberPad)
+                }
             }
-            .navigationTitle("item.add.title")
+            .navigationTitle("item.edit.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -73,17 +90,18 @@ struct AddItemSheet: View {
     }
 
     private func save() {
-        let nextSort = (event.items.map(\.sortIndex).max() ?? -1) + 1
-        let item = InventoryItem(
-            name: name.trimmingCharacters(in: .whitespaces),
-            sub: sub.trimmingCharacters(in: .whitespaces),
-            price: price,
-            photoData: photoData,
-            sortIndex: nextSort
-        )
-        item.event = event
-        event.items.append(item)
-        context.insert(item)
+        item.name = name.trimmingCharacters(in: .whitespaces)
+        item.sub = sub.trimmingCharacters(in: .whitespaces)
+        item.price = price
+        item.photoData = photoData
+        if let stock = item.stock(on: day) {
+            stock.initial = stockInitial
+        } else if stockInitial > 0 {
+            let stock = DailyStock(initial: stockInitial)
+            stock.item = item
+            stock.day = day
+            context.insert(stock)
+        }
         try? context.save()
         dismiss()
     }

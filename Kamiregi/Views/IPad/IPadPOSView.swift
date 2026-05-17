@@ -9,7 +9,6 @@ struct IPadPOSView: View {
     @State private var isGrid = true
     @State private var oosItem: InventoryItem?
     @State private var showPayment = false
-    @State private var showCartSheet = false
 
     var body: some View {
         GeometryReader { geo in
@@ -23,7 +22,7 @@ struct IPadPOSView: View {
             }
             .overlay(alignment: .bottomTrailing) {
                 if compact && cart.count > 0 {
-                    POSCartBar(cart: cart) { showCartSheet = true }
+                    POSCartBar(cart: cart) { showPayment = true }
                         .frame(maxWidth: 320)
                         .padding()
                 }
@@ -58,9 +57,6 @@ struct IPadPOSView: View {
         }
         .sheet(isPresented: $showPayment) {
             PaymentSheet(cart: cart, event: event, day: day) { showPayment = false }
-        }
-        .sheet(isPresented: $showCartSheet) {
-            CartSheet(cart: cart, event: event, day: day)
         }
     }
 

@@ -8,8 +8,7 @@ final class InventoryItem {
     var name: String = ""
     var sub: String = ""
     var price: Int = 0
-    var emoji: String = "📦"
-    var swatchHex: String = "#FFE4DC"
+    var photoData: Data?
     var sortIndex: Int = 0
     var event: Event?
 
@@ -22,17 +21,14 @@ final class InventoryItem {
     @Relationship(deleteRule: .cascade, inverse: \DailyStock.item)
     var stocks: [DailyStock] = []
 
-    init(name: String, sub: String, price: Int, emoji: String, swatchHex: String, sortIndex: Int = 0) {
+    init(name: String, sub: String, price: Int, photoData: Data? = nil, sortIndex: Int = 0) {
         self.id = UUID()
         self.name = name
         self.sub = sub
         self.price = price
-        self.emoji = emoji
-        self.swatchHex = swatchHex
+        self.photoData = photoData
         self.sortIndex = sortIndex
     }
-
-    var swatch: Color { Color(hex: swatchHex) }
 
     var hasRegion: Bool { regionWidth > 0 && regionHeight > 0 }
 
