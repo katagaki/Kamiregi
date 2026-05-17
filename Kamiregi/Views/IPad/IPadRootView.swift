@@ -5,7 +5,7 @@ struct IPadRootView: View {
     @Query(sort: \Event.createdAt, order: .forward) private var events: [Event]
     @State private var selectedEventID: PersistentIdentifier?
     @State private var selectedDayID: PersistentIdentifier?
-    @State private var section: IPadSection = .pos
+    @State private var section: IPadSection = .register
     @State private var showAddEvent = false
     @State private var cart = CartStore()
 
@@ -48,8 +48,7 @@ struct IPadRootView: View {
     private var detail: some View {
         if let event = currentEvent, let day = currentDay {
             switch section {
-            case .pos:          IPadPOSView(event: event, day: day, cart: cart)
-            case .oshinagaki:   IPadOshinagakiView(event: event, day: day, cart: cart)
+            case .register:     IPadRegisterView(event: event, day: day, cart: cart)
             case .items:        ItemsSetupView(event: event, day: day)
             case .transactions: IPadTransactionsView(event: event, day: day)
             case .reservations: ReservationsView(event: event, day: day)

@@ -9,12 +9,11 @@ struct POSView: View {
     @State private var showCart = false
     @State private var oosItem: InventoryItem?
     @State private var cart = CartStore()
-    @State private var searchText = ""
 
     var body: some View {
         Group {
-            if filteredItems.isEmpty {
-                ContentUnavailableView.search(text: searchText)
+            if sortedItems.isEmpty {
+                ContentUnavailableView("pos.title", systemImage: "cart")
             } else if isGrid {
                 gridContent
             } else {
@@ -26,14 +25,16 @@ struct POSView: View {
         }
         .navigationTitle("pos.title")
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: Text("pos.search.prompt"))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Picker("pos.view.display", selection: $isGrid) {
-                    Label("pos.view.grid", systemImage: "square.grid.2x2").tag(true)
-                    Label("pos.view.list", systemImage: "list.bullet").tag(false)
+                Menu("pos.view.display", systemImage: "ellipsis") {
+                    Picker("pos.view.display", selection: $isGrid) {
+                        Label("pos.view.grid", systemImage: "square.grid.2x2").tag(true)
+                        Label("pos.view.list", systemImage: "list.bullet").tag(false)
+                    }
+                    .pickerStyle(.inline)
+                    .labelsVisibility(.visible)
                 }
-                .pickerStyle(.inline)
             }
         }
         .sheet(isPresented: $showCart) {
@@ -53,17 +54,14 @@ struct POSView: View {
         }
     }
 
-    private var filteredItems: [InventoryItem] {
-        let items = event.items.sorted(by: { $0.sortIndex < $1.sortIndex })
-        guard !searchText.isEmpty else { return items }
-        let query = searchText.lowercased()
-        return items.filter { $0.name.lowercased().contains(query) || $0.sub.lowercased().contains(query) }
+    private var sortedItems: [InventoryItem] {
+        event.items.sorted(by: { $0.sortIndex < $1.sortIndex })
     }
 
     private var gridContent: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
-                ForEach(filteredItems, id: \.id) { item in
+                ForEach(sortedItems, id: \.id) { item in
                     POSGridCard(item: item, day: day) { tap(item) }
                 }
             }
@@ -73,7 +71,7 @@ struct POSView: View {
     }
 
     private var listContent: some View {
-        List(filteredItems, id: \.id) { item in
+        List(sortedItems, id: \.id) { item in
             POSListRow(item: item, day: day) { tap(item) }
         }
     }

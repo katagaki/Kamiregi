@@ -40,7 +40,7 @@ struct CartSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("common.cancel") { dismiss() }
+                    Button(role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("pos.cart.clear", role: .destructive) {

@@ -15,7 +15,7 @@ struct CartItem: Identifiable, Equatable {
     var swatch: Color { Color(hex: swatchHex) }
     var subtotal: Int { qty * price }
 
-    static func == (lhs: CartItem, rhs: CartItem) -> Bool { lhs.id == rhs.id }
+    static func == (lhs: CartItem, rhs: CartItem) -> Bool { lhs.id == rhs.id && lhs.qty == rhs.qty }
 }
 
 @MainActor
@@ -48,12 +48,12 @@ final class CartStore {
     }
 
     func increment(_ line: CartItem) {
-        guard let idx = lines.firstIndex(of: line) else { return }
+        guard let idx = lines.firstIndex(where: { $0.id == line.id }) else { return }
         lines[idx].qty += 1
     }
 
     func decrement(_ line: CartItem) {
-        guard let idx = lines.firstIndex(of: line) else { return }
+        guard let idx = lines.firstIndex(where: { $0.id == line.id }) else { return }
         if lines[idx].qty > 1 { lines[idx].qty -= 1 } else { lines.remove(at: idx) }
     }
 

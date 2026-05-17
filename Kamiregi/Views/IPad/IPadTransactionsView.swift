@@ -52,7 +52,10 @@ struct IPadTransactionsView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button("transactions.export.csv", systemImage: "square.and.arrow.up") { }
+                    ShareLink(item: exportCSV, subject: Text("transactions.export.csv")) {
+                        Label("transactions.export.csv", systemImage: "tablecells")
+                    }
+                    .disabled(day.transactions.isEmpty)
                     Button("transactions.export.pdf", systemImage: "doc") { }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -66,5 +69,16 @@ struct IPadTransactionsView: View {
 
     private var sortedTransactions: [SaleTransaction] {
         day.transactions.sorted { $0.timestamp > $1.timestamp }
+    }
+
+    private var exportCSV: String {
+        var lines = ["#,日時,合計,受取,お釣り,内訳"]
+        let fmt = ISO8601DateFormatter()
+        fmt.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
+        for tx in day.transactions.sorted(by: { $0.number < $1.number }) {
+            let items = tx.lines.map { "\($0.itemName) × \($0.qty)" }.joined(separator: " / ")
+            lines.append("\(tx.number),\(fmt.string(from: tx.timestamp)),\(tx.total),\(tx.paid),\(tx.change),\"\(items)\"")
+        }
+        return lines.joined(separator: "\n")
     }
 }

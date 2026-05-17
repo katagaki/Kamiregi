@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 enum IPadSection: Hashable, CaseIterable {
-    case pos, oshinagaki, items, transactions, reservations
+    case register, items, transactions, reservations
 }
 
 struct IPadSidebar: View {
@@ -91,8 +91,7 @@ struct IPadSidebar: View {
         let txCount = activeDay?.transactions.count
         let resCount = activeDay?.reservations.count
         return [
-            SubNavRow(id: .pos, labelKey: "event.detail.standard", icon: "cart", badge: nil),
-            SubNavRow(id: .oshinagaki, labelKey: "event.detail.oshinagaki", icon: "photo", badge: nil),
+            SubNavRow(id: .register, labelKey: "pos.title", icon: "cart", badge: nil),
             SubNavRow(id: .items, labelKey: "event.detail.items", icon: "bag", badge: event.items.count),
             SubNavRow(id: .transactions, labelKey: "event.detail.transactions.list", icon: "doc.text", badge: txCount),
             SubNavRow(id: .reservations, labelKey: "event.detail.reservations", icon: "person.2", badge: resCount)

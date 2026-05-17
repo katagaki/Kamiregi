@@ -3,6 +3,7 @@ import SwiftData
 
 struct ReservationRow: View {
     @Bindable var res: Reservation
+    @State private var showConfirm = false
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -41,12 +42,30 @@ struct ReservationRow: View {
                     .font(.body.weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(res.pickedUp ? .secondary : .primary)
-                Toggle("", isOn: $res.pickedUp)
-                    .labelsHidden()
-                    .tint(Brand.tint)
+                Button {
+                    showConfirm = true
+                } label: {
+                    Image(systemName: res.pickedUp ? "checkmark.circle.fill" : "circle")
+                        .font(.title2)
+                        .foregroundStyle(res.pickedUp ? Color.green : Color.secondary)
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.vertical, 2)
+        .alert(
+            res.pickedUp
+                ? LocalizedStringKey("reservations.confirm.revert.title")
+                : LocalizedStringKey("reservations.confirm.pickup.title"),
+            isPresented: $showConfirm
+        ) {
+            Button(res.pickedUp
+                   ? LocalizedStringKey("reservations.confirm.revert.action")
+                   : LocalizedStringKey("reservations.confirm.pickup.action")) {
+                res.pickedUp.toggle()
+            }
+            Button("common.cancel", role: .cancel) {}
+        }
     }
 }
 

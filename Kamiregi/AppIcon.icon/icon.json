@@ -142,13 +142,37 @@
         }
       ],
       "name" : "Table",
-      "position" : {
-        "scale" : 0.96,
-        "translation-in-points" : [
-          0,
-          43
-        ]
-      },
+      "position-specializations" : [
+        {
+          "value" : {
+            "scale" : 0.96,
+            "translation-in-points" : [
+              0,
+              43
+            ]
+          }
+        },
+        {
+          "idiom" : "square",
+          "value" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0,
+              43
+            ]
+          }
+        },
+        {
+          "idiom" : "watchOS",
+          "value" : {
+            "scale" : 0.92,
+            "translation-in-points" : [
+              0,
+              26
+            ]
+          }
+        }
+      ],
       "shadow" : {
         "kind" : "layer-color",
         "opacity" : 1
@@ -178,13 +202,37 @@
       ],
       "lighting" : "individual",
       "name" : "Table Legs",
-      "position" : {
-        "scale" : 0.96,
-        "translation-in-points" : [
-          0,
-          43
-        ]
-      },
+      "position-specializations" : [
+        {
+          "value" : {
+            "scale" : 0.96,
+            "translation-in-points" : [
+              0,
+              43
+            ]
+          }
+        },
+        {
+          "idiom" : "square",
+          "value" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0,
+              43
+            ]
+          }
+        },
+        {
+          "idiom" : "watchOS",
+          "value" : {
+            "scale" : 0.92,
+            "translation-in-points" : [
+              0,
+              26
+            ]
+          }
+        }
+      ],
       "shadow" : {
         "kind" : "neutral",
         "opacity" : 1

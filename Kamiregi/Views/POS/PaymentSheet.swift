@@ -68,7 +68,7 @@ struct PaymentSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("common.cancel") { dismiss() }
+                    Button(role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .bottomBar) {
                     Button {

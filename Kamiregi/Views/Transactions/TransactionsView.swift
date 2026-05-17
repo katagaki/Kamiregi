@@ -4,8 +4,6 @@ import SwiftData
 struct TransactionsView: View {
     @Bindable var event: Event
     @Bindable var day: EventDay
-    @State private var searchText = ""
-
     var body: some View {
         Group {
             if day.transactions.isEmpty {
@@ -34,7 +32,7 @@ struct TransactionsView: View {
                     }
 
                     Section("transactions.title") {
-                        ForEach(filteredTransactions, id: \.persistentModelID) { transaction in
+                        ForEach(sortedTransactions, id: \.persistentModelID) { transaction in
                             NavigationLink(value: transaction.persistentModelID) {
                                 TransactionRow(transaction: transaction)
                             }
@@ -45,7 +43,11 @@ struct TransactionsView: View {
         }
         .navigationTitle("transactions.title")
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: Text("transactions.search.prompt"))
+        .navigationDestination(for: PersistentIdentifier.self) { id in
+            if let tx = day.transactions.first(where: { $0.persistentModelID == id }) {
+                TransactionDetailView(transaction: tx)
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
@@ -56,7 +58,10 @@ struct TransactionsView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button("transactions.export.csv", systemImage: "square.and.arrow.up") { }
+                    ShareLink(item: exportCSV, subject: Text("transactions.export.csv")) {
+                        Label("transactions.export.csv", systemImage: "tablecells")
+                    }
+                    .disabled(day.transactions.isEmpty)
                     Button("transactions.export.pdf", systemImage: "doc") { }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -68,13 +73,58 @@ struct TransactionsView: View {
     private var totalRevenue: Int { day.transactions.reduce(0) { $0 + $1.total } }
     private var totalItems: Int { day.transactions.reduce(0) { $0 + $1.itemCount } }
 
-    private var filteredTransactions: [SaleTransaction] {
-        let txs = day.transactions.sorted { $0.timestamp > $1.timestamp }
-        guard !searchText.isEmpty else { return txs }
-        let query = searchText.lowercased()
-        return txs.filter { transaction in
-            transaction.lines.contains { $0.itemName.lowercased().contains(query) }
-                || "#\(transaction.number)".contains(query)
+    private var sortedTransactions: [SaleTransaction] {
+        day.transactions.sorted { $0.timestamp > $1.timestamp }
+    }
+
+    private var exportCSV: String {
+        var lines = ["#,日時,合計,受取,お釣り,内訳"]
+        let fmt = ISO8601DateFormatter()
+        fmt.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
+        for tx in day.transactions.sorted(by: { $0.number < $1.number }) {
+            let items = tx.lines.map { "\($0.itemName) × \($0.qty)" }.joined(separator: " / ")
+            lines.append("\(tx.number),\(fmt.string(from: tx.timestamp)),\(tx.total),\(tx.paid),\(tx.change),\"\(items)\"")
         }
+        return lines.joined(separator: "\n")
+    }
+}
+
+private struct TransactionDetailView: View {
+    var transaction: SaleTransaction
+
+    var body: some View {
+        Form {
+            Section("transactions.title") {
+                ForEach(transaction.lines, id: \.id) { line in
+                    LabeledContent {
+                        Text(yen(line.subtotal)).monospacedDigit()
+                    } label: {
+                        Text("\(line.itemName) × \(line.qty)")
+                    }
+                }
+            }
+            Section {
+                LabeledContent("pos.cart.total") {
+                    Text(yen(transaction.total)).monospacedDigit()
+                }
+                LabeledContent("payment.received") {
+                    Text(yen(transaction.paid)).monospacedDigit()
+                }
+                LabeledContent("payment.change") {
+                    Text(yen(transaction.change))
+                        .monospacedDigit()
+                        .foregroundStyle(Brand.tint)
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+        .navigationTitle(titleLabel)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var titleLabel: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return "#\(String(format: "%03d", transaction.number)) · \(formatter.string(from: transaction.timestamp))"
     }
 }

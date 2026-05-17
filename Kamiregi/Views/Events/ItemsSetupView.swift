@@ -6,6 +6,8 @@ struct ItemsSetupView: View {
     @Bindable var event: Event
     @Bindable var day: EventDay
     @State private var selectedDayID: PersistentIdentifier?
+    @State private var showAddItem = false
+    @State private var searchText = ""
 
     var body: some View {
         Form {
@@ -20,17 +22,20 @@ struct ItemsSetupView: View {
             }
 
             Section {
-                ForEach(event.items.sorted(by: { $0.sortIndex < $1.sortIndex }), id: \.id) { item in
+                ForEach(filteredItems, id: \.id) { item in
                     ItemSetupRow(item: item, day: activeDay)
                 }
                 Button {
+                    showAddItem = true
                 } label: {
                     Label("items.add", systemImage: "plus")
                 }
                 Button {
+                    copyFromPreviousDay()
                 } label: {
                     Label("items.copy.previous", systemImage: "arrow.counterclockwise")
                 }
+                .disabled(!hasPreviousDay)
             } header: {
                 Text("items.section.title")
             } footer: {
@@ -39,17 +44,56 @@ struct ItemsSetupView: View {
         }
         .navigationTitle("items.title")
         .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText, prompt: Text("items.search.prompt"))
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button { } label: { Image(systemName: "plus") }
+            DefaultToolbarItem(kind: .search, placement: .bottomBar)
+            ToolbarSpacer(.fixed, placement: .bottomBar)
+            ToolbarItem(placement: .bottomBar) {
+                Button("common.add", systemImage: "plus") { showAddItem = true }
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.glassProminent)
             }
+        }
+        .sheet(isPresented: $showAddItem) {
+            AddItemSheet(event: event)
         }
         .onAppear {
             if selectedDayID == nil { selectedDayID = day.persistentModelID }
         }
     }
 
+    private var filteredItems: [InventoryItem] {
+        let sorted = event.items.sorted(by: { $0.sortIndex < $1.sortIndex })
+        guard !searchText.isEmpty else { return sorted }
+        let query = searchText.lowercased()
+        return sorted.filter { $0.name.lowercased().contains(query) || $0.sub.lowercased().contains(query) }
+    }
+
     private var activeDay: EventDay {
         event.sortedDays.first { $0.persistentModelID == selectedDayID } ?? day
+    }
+
+    private var hasPreviousDay: Bool {
+        let sorted = event.sortedDays
+        guard let idx = sorted.firstIndex(where: { $0.persistentModelID == activeDay.persistentModelID }) else { return false }
+        return idx > 0
+    }
+
+    private func copyFromPreviousDay() {
+        let sorted = event.sortedDays
+        guard let idx = sorted.firstIndex(where: { $0.persistentModelID == activeDay.persistentModelID }),
+              idx > 0 else { return }
+        let previousDay = sorted[idx - 1]
+        for item in event.items {
+            guard let prevStock = item.stock(on: previousDay) else { continue }
+            if let existing = item.stock(on: activeDay) {
+                existing.initial = prevStock.initial
+            } else {
+                let stock = DailyStock(initial: prevStock.initial)
+                stock.item = item
+                stock.day = activeDay
+                context.insert(stock)
+            }
+        }
     }
 }

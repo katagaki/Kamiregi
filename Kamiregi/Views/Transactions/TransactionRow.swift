@@ -12,8 +12,9 @@ struct TransactionRow: View {
                 .frame(width: 38, height: 38)
                 .background(Brand.tintDim, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
-                Text("#\(String(format: "%03d", transaction.number)) · \(transaction.itemCount)点")
+                Text(timeLabel)
                     .font(.body.weight(.semibold))
+                    .monospacedDigit()
                 Text(detail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -25,7 +26,7 @@ struct TransactionRow: View {
                     .font(.body.weight(.bold))
                     .monospacedDigit()
                 if transaction.change > 0 {
-                    Text("\(timeLabel) · \(yen(transaction.change))")
+                    Text(yen(transaction.change))
                         .font(.caption2)
                         .monospacedDigit()
                         .foregroundStyle(.secondary)

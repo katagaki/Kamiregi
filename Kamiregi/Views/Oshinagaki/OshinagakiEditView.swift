@@ -31,7 +31,7 @@ struct OshinagakiEditView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("common.cancel") { dismiss() }
+                    Button(role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     PhotosPicker(selection: $photosPick, matching: .images) {

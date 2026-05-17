@@ -2,15 +2,16 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 
-struct IPadOshinagakiView: View {
+struct IPadRegisterView: View {
     @Environment(\.modelContext) private var context
     @Bindable var event: Event
     @Bindable var day: EventDay
     @Bindable var cart: CartStore
+    @State private var mode: RegisterMode = .grid
     @State private var oosItem: InventoryItem?
     @State private var showPayment = false
-    @State private var showEdit = false
     @State private var showCartSheet = false
+    @State private var showEdit = false
     @State private var photosPick: PhotosPickerItem?
     @State private var showPhotoPicker = false
     @State private var showClearConfirm = false
@@ -34,24 +35,35 @@ struct IPadOshinagakiView: View {
             }
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("oshinagaki.title")
+        .navigationTitle("pos.title")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button { showEdit = true } label: {
-                    Label("common.edit", systemImage: "pencil")
+            ToolbarItem(placement: .principal) {
+                Picker("register.mode", selection: $mode) {
+                    Image(systemName: "square.grid.2x2").tag(RegisterMode.grid)
+                    Image(systemName: "list.bullet").tag(RegisterMode.list)
+                    Image(systemName: "photo").tag(RegisterMode.oshinagaki)
                 }
+                .pickerStyle(.segmented)
+                .frame(width: 160)
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button("oshinagaki.edit.image.change", systemImage: "photo") {
-                        showPhotoPicker = true
+            if mode == .oshinagaki {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showEdit = true } label: {
+                        Label("common.edit", systemImage: "pencil")
                     }
-                    Button("oshinagaki.edit.clear", systemImage: "trash.slash", role: .destructive) {
-                        showClearConfirm = true
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button("oshinagaki.edit.image.change", systemImage: "photo") {
+                            showPhotoPicker = true
+                        }
+                        Button("oshinagaki.edit.clear", systemImage: "trash.slash", role: .destructive) {
+                            showClearConfirm = true
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
                     }
-                } label: {
-                    Image(systemName: "ellipsis")
                 }
             }
         }
@@ -92,20 +104,52 @@ struct IPadOshinagakiView: View {
         }
     }
 
+    private var sortedItems: [InventoryItem] {
+        event.items.sorted { $0.sortIndex < $1.sortIndex }
+    }
+
     private var main: some View {
-        ScrollView {
-            HStack {
-                Spacer()
-                OshinagakiCanvas(
-                    imageData: event.oshinagakiImage,
-                    items: event.items,
-                    day: day,
-                    onTap: handleTap
-                )
-                .frame(maxWidth: 540)
-                Spacer()
+        ZStack {
+        switch mode {
+        case .grid:
+            if sortedItems.isEmpty {
+                ContentUnavailableView("pos.title", systemImage: "cart")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
+                        ForEach(sortedItems, id: \.id) { item in
+                            POSGridCard(item: item, day: day) { tap(item) }
+                        }
+                    }
+                    .padding(20)
+                }
             }
-            .padding(20)
+        case .list:
+            if sortedItems.isEmpty {
+                ContentUnavailableView("pos.title", systemImage: "cart")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List(sortedItems, id: \.id) { item in
+                    POSListRow(item: item, day: day) { tap(item) }
+                }
+            }
+        case .oshinagaki:
+            ScrollView {
+                HStack {
+                    Spacer()
+                    OshinagakiCanvas(
+                        imageData: event.oshinagakiImage,
+                        items: event.items,
+                        day: day,
+                        onTap: tap
+                    )
+                    .frame(maxWidth: 540)
+                    Spacer()
+                }
+                .padding(20)
+            }
+        }
         }
     }
 
@@ -137,6 +181,10 @@ struct IPadOshinagakiView: View {
             .navigationTitle("pos.cart.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("pos.cart.clear", role: .destructive) { cart.clear() }
+                        .disabled(cart.lines.isEmpty)
+                }
                 ToolbarItem(placement: .bottomBar) {
                     Button { showPayment = true } label: {
                         Text("pos.cart.continue").frame(maxWidth: .infinity)
@@ -149,7 +197,7 @@ struct IPadOshinagakiView: View {
         }
     }
 
-    private func handleTap(_ item: InventoryItem) {
+    private func tap(_ item: InventoryItem) {
         let remaining = item.stock(on: day)?.remaining ?? 0
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }

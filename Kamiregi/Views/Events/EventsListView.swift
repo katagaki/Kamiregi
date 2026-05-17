@@ -11,22 +11,18 @@ struct EventsListView: View {
             content
                 .navigationTitle("events.title")
                 .searchable(text: $searchText, prompt: Text("events.search.prompt"))
+                .toolbarTitleDisplayMode(.inlineLarge)
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu {
-                            Button("common.sort", systemImage: "arrow.up.arrow.down") { }
-                            Button("common.export", systemImage: "square.and.arrow.up") { }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                        }
-                    }
-                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
-                    ToolbarItem(placement: .topBarTrailing) {
+                    DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                    ToolbarSpacer(.fixed, placement: .bottomBar)
+                    ToolbarItemGroup(placement: .bottomBar) {
                         Button {
                             showAdd = true
                         } label: {
                             Label("events.add", systemImage: "plus")
                         }
+                        .buttonStyle(.glassProminent)
+                        .buttonBorderShape(.circle)
                     }
                 }
         }
@@ -87,20 +83,4 @@ struct EventsListView: View {
                 || $0.booth.lowercased().contains(query)
         }
     }
-}
-
-#Preview {
-    EventsListView()
-        .modelContainer(
-            for: [
-                Event.self,
-                EventDay.self,
-                InventoryItem.self,
-                DailyStock.self,
-                SaleTransaction.self,
-                TransactionLine.self,
-                Reservation.self
-            ],
-            inMemory: true
-        )
 }

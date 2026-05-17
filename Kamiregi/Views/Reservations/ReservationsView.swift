@@ -42,18 +42,26 @@ struct ReservationsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: Text("reservations.search.prompt"))
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Picker("reservations.filter", selection: $filter) {
-                    Text("reservations.filter.pending \(pendingCount)").tag(PickupFilter.pending)
-                    Text("reservations.filter.done \(pickedCount)").tag(PickupFilter.done)
-                    Text("reservations.filter.all \(allCount)").tag(PickupFilter.all)
+            ToolbarItem(placement: .bottomBar) {
+                Menu("reservations.filter", systemImage: "line.3.horizontal.decrease") {
+                    Picker("reservations.filter", selection: $filter) {
+                        Label("reservations.filter.pending", systemImage: "clock").tag(PickupFilter.pending)
+                        Label("reservations.filter.done", systemImage: "checkmark.circle").tag(PickupFilter.done)
+                        Label("reservations.filter.all", systemImage: "list.bullet").tag(PickupFilter.all)
+                    }
+                    .pickerStyle(.inline)
+                    .labelsVisibility(.visible)
                 }
-                .pickerStyle(.segmented)
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarSpacer(.fixed, placement: .bottomBar)
+            DefaultToolbarItem(kind: .search, placement: .bottomBar)
+            ToolbarSpacer(.fixed, placement: .bottomBar)
+            ToolbarItem(placement: .bottomBar) {
                 Button { showAdd = true } label: {
                     Label("reservations.add", systemImage: "plus")
                 }
+                .buttonBorderShape(.circle)
+                .buttonStyle(.glassProminent)
             }
         }
         .sheet(isPresented: $showAdd) {

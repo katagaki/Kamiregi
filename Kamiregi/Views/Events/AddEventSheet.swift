@@ -71,10 +71,11 @@ struct AddEventSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("common.cancel") { dismiss() }
+                    Button(role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("common.save", action: save)
+                    Button(role: .confirm, action: save)
+                        .accessibilityLabel("common.save")
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
