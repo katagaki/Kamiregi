@@ -1,10 +1,6 @@
 import Foundation
 import SwiftData
 
-enum ContactKind: String, Codable, CaseIterable {
-    case sns, mail, tel
-}
-
 @Model
 final class Reservation {
     var id: UUID = UUID()
