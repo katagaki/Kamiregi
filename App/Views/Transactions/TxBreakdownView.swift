@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct TxBreakdownView: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var event: Event
     @Bindable var day: EventDay
 
@@ -17,7 +18,7 @@ struct TxBreakdownView: View {
                 List {
                     Section {
                         LabeledContent("event.detail.revenue") {
-                            Text(yen(day.revenue))
+                            Text(currency.format(day.revenue))
                                 .font(.title3.weight(.bold))
                                 .monospacedDigit()
                                 .foregroundStyle(Brand.tint)

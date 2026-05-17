@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ReservationRow: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var res: Reservation
     @State private var showConfirm = false
 
@@ -38,7 +39,7 @@ struct ReservationRow: View {
             }
             Spacer(minLength: 8)
             VStack(alignment: .trailing, spacing: 6) {
-                Text(yen(res.total))
+                Text(currency.format(res.total))
                     .font(.body.weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(res.pickedUp ? .secondary : .primary)

@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct TransactionsView: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var event: Event
     @Bindable var day: EventDay
     var body: some View {
@@ -16,7 +17,7 @@ struct TransactionsView: View {
                 List {
                     Section {
                         LabeledContent("event.detail.revenue") {
-                            Text(yen(totalRevenue))
+                            Text(currency.format(totalRevenue))
                                 .font(.title3.weight(.bold))
                                 .monospacedDigit()
                                 .foregroundStyle(Brand.tint)
@@ -90,6 +91,7 @@ struct TransactionsView: View {
 }
 
 private struct TransactionDetailView: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     var transaction: SaleTransaction
 
     var body: some View {
@@ -97,7 +99,7 @@ private struct TransactionDetailView: View {
             Section("transactions.title") {
                 ForEach(transaction.lines, id: \.id) { line in
                     LabeledContent {
-                        Text(yen(line.subtotal)).monospacedDigit()
+                        Text(currency.format(line.subtotal)).monospacedDigit()
                     } label: {
                         Text("\(line.itemName) × \(line.qty)")
                     }
@@ -105,13 +107,13 @@ private struct TransactionDetailView: View {
             }
             Section {
                 LabeledContent("pos.cart.total") {
-                    Text(yen(transaction.total)).monospacedDigit()
+                    Text(currency.format(transaction.total)).monospacedDigit()
                 }
                 LabeledContent("payment.received") {
-                    Text(yen(transaction.paid)).monospacedDigit()
+                    Text(currency.format(transaction.paid)).monospacedDigit()
                 }
                 LabeledContent("payment.change") {
-                    Text(yen(transaction.change))
+                    Text(currency.format(transaction.change))
                         .monospacedDigit()
                         .foregroundStyle(Brand.tint)
                         .fontWeight(.semibold)

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct POSCartBar: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var cart: CartStore
     var onCheckout: () -> Void
     @State private var isExpanded = false
@@ -75,7 +76,7 @@ struct POSCartBar: View {
                             }
                             .buttonStyle(.plain)
                             Spacer(minLength: 6)
-                            Text(yen(line.subtotal))
+                            Text(currency.format(line.subtotal))
                                 .font(.subheadline.weight(.semibold))
                                 .monospacedDigit()
                                 .contentTransition(.numericText())
@@ -108,7 +109,7 @@ struct POSCartBar: View {
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                         .textCase(.uppercase)
-                    Text(yen(cart.subtotal))
+                    Text(currency.format(cart.subtotal))
                         .font(.title3.weight(.bold))
                         .monospacedDigit()
                         .contentTransition(.numericText())

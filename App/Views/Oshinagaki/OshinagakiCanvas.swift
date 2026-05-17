@@ -51,6 +51,7 @@ struct OshinagakiCanvas: View {
 }
 
 private struct OshinagakiTapRegion: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var item: InventoryItem
     var day: EventDay
     var onTap: () -> Void
@@ -77,7 +78,7 @@ private struct OshinagakiTapRegion: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     Spacer()
                     HStack(alignment: .bottom) {
-                        Text(item.price > 0 ? yen(item.price) : String(localized: "items.free"))
+                        Text(item.price > 0 ? currency.format(item.price) : String(localized: "items.free"))
                             .font(.footnote.weight(.bold))
                             .monospacedDigit()
                         Spacer()

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct BreakdownRow: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var item: InventoryItem
     var day: EventDay
 
@@ -16,7 +17,7 @@ struct BreakdownRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.name)
                         .font(.subheadline.weight(.semibold))
-                    Text("\(sold) / \(initial) · \(yen(sold * item.price))")
+                    Text("\(sold) / \(initial) · \(currency.format(sold * item.price))")
                         .font(.caption)
                         .monospacedDigit()
                         .foregroundStyle(.secondary)

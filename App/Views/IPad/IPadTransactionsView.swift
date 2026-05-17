@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct IPadTransactionsView: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var event: Event
     @Bindable var day: EventDay
 
@@ -17,7 +18,7 @@ struct IPadTransactionsView: View {
                 List {
                     Section {
                         LabeledContent("event.detail.revenue") {
-                            Text(yen(totalRevenue))
+                            Text(currency.format(totalRevenue))
                                 .font(.title3.weight(.bold))
                                 .monospacedDigit()
                                 .foregroundStyle(Brand.tint)

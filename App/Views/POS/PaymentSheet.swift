@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct PaymentSheet: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Bindable var cart: CartStore
@@ -22,7 +23,7 @@ struct PaymentSheet: View {
             Form {
                 Section {
                     LabeledContent("pos.cart.total") {
-                        Text(yen(cart.subtotal))
+                        Text(currency.format(cart.subtotal))
                             .font(.title.weight(.bold))
                             .monospacedDigit()
                     }
@@ -42,7 +43,7 @@ struct PaymentSheet: View {
                             Button {
                                 paid = amount
                             } label: {
-                                Text(yen(amount))
+                                Text(currency.format(amount))
                                     .font(.subheadline.weight(.semibold))
                                     .monospacedDigit()
                                     .frame(maxWidth: .infinity)
@@ -57,7 +58,7 @@ struct PaymentSheet: View {
 
                 Section {
                     LabeledContent("payment.change") {
-                        Text(yen(change))
+                        Text(currency.format(change))
                             .font(.largeTitle.weight(.bold))
                             .monospacedDigit()
                             .foregroundStyle(Brand.tint)

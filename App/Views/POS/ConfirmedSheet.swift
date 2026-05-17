@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ConfirmedSheet: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     var transaction: SaleTransaction
     var paid: Int
     var onDone: () -> Void
@@ -31,7 +32,7 @@ struct ConfirmedSheet: View {
                 Section("transactions.title") {
                     ForEach(transaction.lines, id: \.id) { line in
                         LabeledContent {
-                            Text(yen(line.subtotal)).monospacedDigit()
+                            Text(currency.format(line.subtotal)).monospacedDigit()
                         } label: {
                             Text("\(line.itemName) × \(line.qty)")
                         }
@@ -40,13 +41,13 @@ struct ConfirmedSheet: View {
 
                 Section {
                     LabeledContent("pos.cart.total") {
-                        Text(yen(transaction.total)).monospacedDigit()
+                        Text(currency.format(transaction.total)).monospacedDigit()
                     }
                     LabeledContent("payment.received") {
-                        Text(yen(paid)).monospacedDigit()
+                        Text(currency.format(paid)).monospacedDigit()
                     }
                     LabeledContent("payment.change") {
-                        Text(yen(transaction.change))
+                        Text(currency.format(transaction.change))
                             .monospacedDigit()
                             .foregroundStyle(Brand.tint)
                             .fontWeight(.semibold)

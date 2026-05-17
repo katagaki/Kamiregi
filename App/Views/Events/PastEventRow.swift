@@ -1,11 +1,12 @@
 import SwiftUI
 
 struct PastEventRow: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     var event: Event
 
     var body: some View {
         LabeledContent {
-            Text(yen(event.sortedDays.reduce(0) { $0 + $1.revenue }))
+            Text(currency.format(event.sortedDays.reduce(0) { $0 + $1.revenue }))
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
         } label: {

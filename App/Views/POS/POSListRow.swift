@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct POSListRow: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var item: InventoryItem
     var day: EventDay
     var onAdd: () -> Void
@@ -21,7 +22,7 @@ struct POSListRow: View {
                     .foregroundStyle(.secondary)
             }
             Spacer(minLength: 8)
-            Text(item.price > 0 ? yen(item.price) : String(localized: "items.free"))
+            Text(item.price > 0 ? currency.format(item.price) : String(localized: "items.free"))
                 .font(.body.weight(.semibold))
                 .monospacedDigit()
             Button(action: onAdd) {

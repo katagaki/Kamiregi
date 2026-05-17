@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct TransactionRow: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     var transaction: SaleTransaction
 
     var body: some View {
@@ -22,11 +23,11 @@ struct TransactionRow: View {
             }
             Spacer(minLength: 8)
             VStack(alignment: .trailing, spacing: 2) {
-                Text(yen(transaction.total))
+                Text(currency.format(transaction.total))
                     .font(.body.weight(.bold))
                     .monospacedDigit()
                 if transaction.change > 0 {
-                    Text(yen(transaction.change))
+                    Text(currency.format(transaction.change))
                         .font(.caption2)
                         .monospacedDigit()
                         .foregroundStyle(.secondary)

@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct ItemSetupRow: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     var item: InventoryItem
     var day: EventDay
 
@@ -11,7 +12,7 @@ struct ItemSetupRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.name)
                     .font(.body)
-                Text("\(item.sub) · \(item.price > 0 ? yen(item.price) : String(localized: "items.free"))")
+                Text("\(item.sub) · \(item.price > 0 ? currency.format(item.price) : String(localized: "items.free"))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

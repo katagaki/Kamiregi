@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CartLineRow: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     var line: CartItem
     @Bindable var cart: CartStore
 
@@ -9,38 +10,48 @@ struct CartLineRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
             ItemThumbnail(name: line.name, photoData: line.photoData)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(line.name)
-                    .font(.body.weight(.semibold))
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(line.name)
+                        .font(.body.weight(.semibold))
+                        .lineLimit(1)
+                    Spacer(minLength: 8)
+                    Text(currency.format(liveQty * line.price))
+                        .font(.body.weight(.bold))
+                        .monospacedDigit()
+                }
                 Text(line.sub)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 8)
-            Stepper(value: qtyBinding, in: 0...99) {
-                Text("\(liveQty)").monospacedDigit().font(.body.weight(.semibold))
-            }
-            .labelsHidden()
-            Text(yen(liveQty * line.price))
-                .font(.body.weight(.bold))
-                .monospacedDigit()
-                .frame(minWidth: 64, alignment: .trailing)
-        }
-        .padding(.vertical, 2)
-    }
-
-    private var qtyBinding: Binding<Int> {
-        Binding(
-            get: { liveQty },
-            set: { newValue in
-                if newValue <= 0 {
-                    cart.decrement(line)
-                } else if let idx = cart.lines.firstIndex(where: { $0.id == line.id }) {
-                    cart.lines[idx].qty = newValue
+                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    Button {
+                        cart.decrement(line)
+                    } label: {
+                        Image(systemName: liveQty == 1 ? "trash" : "minus")
+                            .font(.caption.weight(.semibold))
+                            .frame(width: 26, height: 26)
+                            .background(.secondary.opacity(0.15), in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                    Text("\(liveQty)")
+                        .font(.body.weight(.semibold))
+                        .monospacedDigit()
+                        .frame(minWidth: 22, alignment: .center)
+                    Button {
+                        cart.increment(line)
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.caption.weight(.semibold))
+                            .frame(width: 26, height: 26)
+                            .background(.secondary.opacity(0.15), in: Circle())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
-        )
+        }
+        .padding(.vertical, 2)
     }
 }

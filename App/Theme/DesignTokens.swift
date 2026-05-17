@@ -37,10 +37,3 @@ extension Color {
         self = Color(.sRGB, red: red, green: green, blue: blue, opacity: alpha)
     }
 }
-
-func yen(_ amount: Int) -> String {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .decimal
-    formatter.groupingSeparator = ","
-    return "¥" + (formatter.string(from: NSNumber(value: amount)) ?? String(amount))
-}

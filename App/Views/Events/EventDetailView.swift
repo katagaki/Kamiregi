@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct EventDetailView: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Bindable var event: Event
@@ -30,7 +31,7 @@ struct EventDetailView: View {
                 Section("event.detail.today") {
                     HStack(spacing: 0) {
                         VStack(spacing: 6) {
-                            Text(yen(day.revenue))
+                            Text(currency.format(day.revenue))
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .fontDesign(.rounded)

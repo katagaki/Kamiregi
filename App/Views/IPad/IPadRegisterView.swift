@@ -3,6 +3,7 @@ import SwiftData
 import PhotosUI
 
 struct IPadRegisterView: View {
+    @AppStorage("currency") private var currency: Currency = .yen
     @Environment(\.modelContext) private var context
     @Bindable var event: Event
     @Bindable var day: EventDay
@@ -106,90 +107,102 @@ struct IPadRegisterView: View {
 
     private var main: some View {
         ZStack {
-        switch mode {
-        case .grid:
-            if sortedItems.isEmpty {
-                ContentUnavailableView("pos.title", systemImage: "cart")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
-                        ForEach(sortedItems, id: \.id) { item in
-                            POSGridCard(item: item, day: day) { tap(item) }
+            switch mode {
+            case .grid:
+                if sortedItems.isEmpty {
+                    ContentUnavailableView("pos.title", systemImage: "cart")
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
+                            ForEach(sortedItems, id: \.id) { item in
+                                POSGridCard(item: item, day: day) { tap(item) }
+                            }
                         }
+                        .padding(20)
+                    }
+                }
+            case .list:
+                if sortedItems.isEmpty {
+                    ContentUnavailableView("pos.title", systemImage: "cart")
+                } else {
+                    List(sortedItems, id: \.id) { item in
+                        POSListRow(item: item, day: day) { tap(item) }
+                    }
+                }
+            case .oshinagaki:
+                ScrollView {
+                    HStack {
+                        Spacer()
+                        OshinagakiCanvas(
+                            imageData: event.oshinagakiImage,
+                            items: event.items,
+                            day: day,
+                            onTap: tap
+                        )
+                        .frame(maxWidth: 540)
+                        Spacer()
                     }
                     .padding(20)
                 }
             }
-        case .list:
-            if sortedItems.isEmpty {
-                ContentUnavailableView("pos.title", systemImage: "cart")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                List(sortedItems, id: \.id) { item in
-                    POSListRow(item: item, day: day) { tap(item) }
-                }
-            }
-        case .oshinagaki:
-            ScrollView {
-                HStack {
-                    Spacer()
-                    OshinagakiCanvas(
-                        imageData: event.oshinagakiImage,
-                        items: event.items,
-                        day: day,
-                        onTap: tap
-                    )
-                    .frame(maxWidth: 540)
-                    Spacer()
-                }
-                .padding(20)
-            }
         }
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var cartPane: some View {
-        NavigationStack {
-            Group {
-                if cart.lines.isEmpty {
-                    ContentUnavailableView(
-                        "pos.cart.title",
-                        systemImage: "cart",
-                        description: Text("pos.cart.subtotal")
-                    )
-                } else {
-                    List {
-                        ForEach(cart.lines) { line in
+        VStack(spacing: 0) {
+            HStack {
+                Text("pos.cart.title")
+                    .font(.headline)
+                Spacer()
+                Button("pos.cart.clear", role: .destructive) { cart.clear() }
+                    .buttonStyle(.borderless)
+                    .disabled(cart.lines.isEmpty)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            Divider()
+
+            if cart.lines.isEmpty {
+                ContentUnavailableView(
+                    "pos.cart.title",
+                    systemImage: "cart",
+                    description: Text("pos.cart.subtotal")
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(cart.lines.enumerated()), id: \.element.id) { idx, line in
                             CartLineRow(line: line, cart: cart)
-                        }
-                        Section {
-                            LabeledContent("pos.cart.total") {
-                                Text(yen(cart.subtotal))
-                                    .font(.title2.weight(.bold))
-                                    .monospacedDigit()
-                                    .foregroundStyle(Brand.tint)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                            if idx < cart.lines.count - 1 {
+                                Divider().padding(.leading, 72)
                             }
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .navigationTitle("pos.cart.title")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("pos.cart.clear", role: .destructive) { cart.clear() }
-                        .disabled(cart.lines.isEmpty)
+
+            Button { showPayment = true } label: {
+                HStack {
+                    Text("pos.cart.continue")
+                        .font(.subheadline.weight(.semibold))
+                    Spacer()
+                    Text(currency.format(cart.subtotal))
+                        .font(.title3.weight(.bold))
+                        .monospacedDigit()
                 }
-                ToolbarItem(placement: .bottomBar) {
-                    Button { showPayment = true } label: {
-                        Text("pos.cart.continue").frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(cart.lines.isEmpty)
-                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 20)
+                .frame(height: 56)
+                .glassEffect(.regular.tint(Brand.tint).interactive(), in: Capsule())
             }
+            .buttonStyle(.plain)
+            .disabled(cart.lines.isEmpty)
+            .padding(16)
         }
     }
 
