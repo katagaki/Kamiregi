@@ -113,7 +113,10 @@ struct IPadRegisterView: View {
                     ContentUnavailableView("pos.title", systemImage: "cart")
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
+                        LazyVGrid(
+                            columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)],
+                            spacing: 12
+                        ) {
                             ForEach(sortedItems, id: \.id) { item in
                                 POSGridCard(item: item, day: day, cart: cart) { tap(item) }
                             }
