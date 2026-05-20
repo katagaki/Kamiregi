@@ -5,7 +5,6 @@ struct POSCartBar: View {
     @Bindable var cart: CartStore
     var onCheckout: () -> Void
     @State private var isExpanded = false
-    @State private var showCheckoutConfirm = false
     @State private var showClearConfirm = false
 
     var body: some View {
@@ -25,13 +24,6 @@ struct POSCartBar: View {
             }
         }
         .alert(
-            "pos.cart.checkout.confirm.title",
-            isPresented: $showCheckoutConfirm
-        ) {
-            Button("common.cancel", role: .cancel) {}
-            Button("pos.cart.continue") { onCheckout() }
-        }
-        .alert(
             "pos.cart.clear.confirm.title",
             isPresented: $showClearConfirm
         ) {
@@ -44,34 +36,34 @@ struct POSCartBar: View {
 
     private var totalCapsule: some View {
         VStack(alignment: .leading, spacing: 0) {
-            VStack(spacing: 8) {
+            VStack(spacing: 16) {
                 ForEach(cart.lines) { line in
-                    VStack(alignment: .leading, spacing: 3) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text(line.name)
                             .font(.subheadline)
                             .lineLimit(1)
-                        HStack(spacing: 6) {
+                        HStack(spacing: 10) {
                             Button {
                                 withAnimation(.smooth.speed(2.0)) { cart.decrement(line) }
                             } label: {
                                 Image(systemName: line.qty == 1 ? "trash" : "minus")
-                                    .font(.caption2.weight(.semibold))
-                                    .frame(width: 22, height: 22)
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(width: 34, height: 34)
                                     .background(.secondary.opacity(0.15), in: Circle())
                             }
                             .buttonStyle(.plain)
                             Text("\(line.qty)")
-                                .font(.subheadline.weight(.semibold))
+                                .font(.body.weight(.semibold))
                                 .monospacedDigit()
-                                .frame(minWidth: 18, alignment: .center)
+                                .frame(minWidth: 24, alignment: .center)
                                 .contentTransition(.numericText())
                                 .animation(.smooth.speed(2.0), value: line.qty)
                             Button {
                                 withAnimation(.smooth.speed(2.0)) { cart.increment(line) }
                             } label: {
                                 Image(systemName: "plus")
-                                    .font(.caption2.weight(.semibold))
-                                    .frame(width: 22, height: 22)
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(width: 34, height: 34)
                                     .background(.secondary.opacity(0.15), in: Circle())
                             }
                             .buttonStyle(.plain)
@@ -143,7 +135,7 @@ struct POSCartBar: View {
 
     private var checkoutCapsule: some View {
         Button {
-            showCheckoutConfirm = true
+            onCheckout()
         } label: {
             Label("pos.cart.checkout", systemImage: "chevron.right")
                 .labelStyle(.titleAndIcon)

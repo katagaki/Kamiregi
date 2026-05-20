@@ -4,10 +4,11 @@ struct POSListRow: View {
     @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var item: InventoryItem
     var day: EventDay
+    var cart: CartStore
     var onAdd: () -> Void
 
     var body: some View {
-        let remaining = item.stock(on: day)?.remaining ?? 0
+        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
         let oos = remaining == 0
         HStack(spacing: 12) {
             ItemThumbnail(name: item.name, photoData: item.photoData)

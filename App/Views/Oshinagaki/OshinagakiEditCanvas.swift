@@ -35,7 +35,14 @@ struct OshinagakiEditCanvas: View {
                     .stroke(Color(.separator), lineWidth: 0.5)
             )
         }
-        .aspectRatio(1.0 / 1.34, contentMode: .fit)
+        .aspectRatio(canvasAspect, contentMode: .fit)
+    }
+
+    private var canvasAspect: CGSize {
+        if let data = imageData, let uiImage = UIImage(data: data), uiImage.size.width > 0, uiImage.size.height > 0 {
+            return uiImage.size
+        }
+        return CGSize(width: 1.0, height: 1.34)
     }
 
     private var itemsWithRegions: [InventoryItem] {
@@ -47,7 +54,7 @@ struct OshinagakiEditCanvas: View {
         if let data = imageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
         } else {
             ZStack {
                 StripedPlaceholder()

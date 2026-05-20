@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsMenu: View {
     @AppStorage("currency") private var currency: Currency = .yen
+    @AppStorage("showReceiptScreen") private var showReceiptScreen = true
 
     var body: some View {
         Menu {
@@ -13,6 +14,10 @@ struct SettingsMenu: View {
                 Text("settings.currency")
             }
             .pickerStyle(.inline)
+
+            Toggle(isOn: $showReceiptScreen) {
+                Label("settings.showReceiptScreen", systemImage: "checkmark.seal")
+            }
 
             Divider()
 

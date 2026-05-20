@@ -115,7 +115,7 @@ struct IPadRegisterView: View {
                     ScrollView {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
                             ForEach(sortedItems, id: \.id) { item in
-                                POSGridCard(item: item, day: day) { tap(item) }
+                                POSGridCard(item: item, day: day, cart: cart) { tap(item) }
                             }
                         }
                         .padding(20)
@@ -126,7 +126,7 @@ struct IPadRegisterView: View {
                     ContentUnavailableView("pos.title", systemImage: "cart")
                 } else {
                     List(sortedItems, id: \.id) { item in
-                        POSListRow(item: item, day: day) { tap(item) }
+                        POSListRow(item: item, day: day, cart: cart) { tap(item) }
                     }
                 }
             case .oshinagaki:
@@ -137,6 +137,7 @@ struct IPadRegisterView: View {
                             imageData: event.oshinagakiImage,
                             items: event.items,
                             day: day,
+                            cart: cart,
                             onTap: tap
                         )
                         .frame(maxWidth: 540)
@@ -207,7 +208,7 @@ struct IPadRegisterView: View {
     }
 
     private func tap(_ item: InventoryItem) {
-        let remaining = item.stock(on: day)?.remaining ?? 0
+        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }
 

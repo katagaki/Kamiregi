@@ -6,6 +6,7 @@ struct OshinagakiCanvas: View {
     var imageData: Data?
     var items: [InventoryItem]
     var day: EventDay
+    var cart: CartStore
     var onTap: (InventoryItem) -> Void
 
     var body: some View {
@@ -20,7 +21,7 @@ struct OshinagakiCanvas: View {
                         width: rect.width * geo.size.width,
                         height: rect.height * geo.size.height
                     )
-                    OshinagakiTapRegion(item: item, day: day, onTap: { onTap(item) })
+                    OshinagakiTapRegion(item: item, day: day, cart: cart, onTap: { onTap(item) })
                         .frame(width: frame.width, height: frame.height)
                         .position(x: frame.midX, y: frame.midY)
                 }
@@ -31,7 +32,14 @@ struct OshinagakiCanvas: View {
                     .stroke(Color(.separator), lineWidth: 0.5)
             )
         }
-        .aspectRatio(1.0 / 1.34, contentMode: .fit)
+        .aspectRatio(canvasAspect, contentMode: .fit)
+    }
+
+    private var canvasAspect: CGSize {
+        if let data = imageData, let uiImage = UIImage(data: data), uiImage.size.width > 0, uiImage.size.height > 0 {
+            return uiImage.size
+        }
+        return CGSize(width: 1.0, height: 1.34)
     }
 
     private var itemsWithRegions: [InventoryItem] {
@@ -43,7 +51,7 @@ struct OshinagakiCanvas: View {
         if let data = imageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
         } else {
             StripedPlaceholder()
         }
@@ -51,53 +59,32 @@ struct OshinagakiCanvas: View {
 }
 
 private struct OshinagakiTapRegion: View {
-    @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var item: InventoryItem
     var day: EventDay
+    var cart: CartStore
     var onTap: () -> Void
 
     var body: some View {
-        let remaining = item.stock(on: day)?.remaining ?? 0
+        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
         let oos = remaining == 0
         let strokeColor: Color = oos ? .red : Brand.tint
 
         Button(action: onTap) {
             ZStack {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(.regularMaterial)
+                    .fill(oos ? Color.black.opacity(0.35) : Color.clear)
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .strokeBorder(strokeColor.opacity(0.6), lineWidth: 1.5)
-                VStack {
-                    Text(item.name)
-                        .font(.caption2.weight(.semibold))
-                        .lineLimit(1)
+                if oos {
+                    Text("pos.stock.sold_out")
+                        .font(.caption2.bold())
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(oos ? Color.red : Brand.tint, in: Capsule())
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Spacer()
-                    HStack(alignment: .bottom) {
-                        Text(item.price > 0 ? currency.format(item.price) : String(localized: "items.free"))
-                            .font(.footnote.weight(.bold))
-                            .monospacedDigit()
-                        Spacer()
-                        if oos {
-                            Text("pos.stock.sold_out")
-                                .font(.caption2.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(.black.opacity(0.85), in: Capsule())
-                        } else {
-                            Text("pos.stock.remaining \(remaining)")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.black.opacity(0.85), in: Capsule())
                 }
-                .padding(8)
             }
+            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .buttonStyle(.plain)
     }

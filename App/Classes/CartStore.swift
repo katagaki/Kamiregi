@@ -13,6 +13,10 @@ final class CartStore {
     var distinctCount: Int { lines.count }
     var isEmpty: Bool { lines.isEmpty }
 
+    func qty(for item: InventoryItem) -> Int {
+        lines.first(where: { $0.itemID == item.persistentModelID })?.qty ?? 0
+    }
+
     func add(_ item: InventoryItem) {
         if let idx = lines.firstIndex(where: { $0.itemID == item.persistentModelID }) {
             lines[idx].qty += 1

@@ -3,6 +3,7 @@ import SwiftData
 
 struct PaymentSheet: View {
     @AppStorage("currency") private var currency: Currency = .yen
+    @AppStorage("showReceiptScreen") private var showReceiptScreen = true
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Bindable var cart: CartStore
@@ -37,11 +38,20 @@ struct PaymentSheet: View {
                             .multilineTextAlignment(.trailing)
                             .font(.title.weight(.semibold))
                             .monospacedDigit()
+                        Button {
+                            paid = 0
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(paid == 0 ? 0 : 1)
+                        .disabled(paid == 0)
                     }
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
                         ForEach(quickAmounts, id: \.self) { amount in
                             Button {
-                                paid = amount
+                                paid += amount
                             } label: {
                                 Text(currency.format(amount))
                                     .font(.subheadline.weight(.semibold))
@@ -50,7 +60,7 @@ struct PaymentSheet: View {
                                     .padding(.vertical, 8)
                             }
                             .buttonStyle(.bordered)
-                            .tint(paid == amount ? Brand.tint : .secondary)
+                            .tint(Brand.tint)
                         }
                     }
                     .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
@@ -120,7 +130,13 @@ struct PaymentSheet: View {
         }
         try? context.save()
         cart.transactionNumber += 1
-        confirmedTx = transaction
-        showConfirmed = true
+        if showReceiptScreen {
+            confirmedTx = transaction
+            showConfirmed = true
+        } else {
+            cart.clear()
+            paid = 0
+            onConfirmed()
+        }
     }
 }
