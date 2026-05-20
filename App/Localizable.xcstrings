@@ -245,6 +245,23 @@
         }
       }
     },
+    "settings.showReceiptScreen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receipt screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会計完了画面"
+          }
+        }
+      }
+    },
     "settings.sourceCode" : {
       "extractionState" : "manual",
       "localizations" : {

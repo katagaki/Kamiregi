@@ -33,12 +33,10 @@ struct OshinagakiEditView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(role: .cancel) { dismiss() }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     PhotosPicker(selection: $photosPick, matching: .images) {
                         Label("oshinagaki.edit.image.change", systemImage: "photo")
                     }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("oshinagaki.edit.region.delete", systemImage: "trash", role: .destructive) {
                             deleteSelectedRegion()
@@ -51,12 +49,13 @@ struct OshinagakiEditView: View {
                         Image(systemName: "ellipsis")
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("common.done") {
+                ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .confirm) {
                         try? context.save()
                         dismiss()
                     }
-                    .fontWeight(.semibold)
+                    .accessibilityLabel("common.done")
                 }
             }
             .onChange(of: photosPick) { _, newValue in

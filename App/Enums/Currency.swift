@@ -17,6 +17,18 @@ enum Currency: String, CaseIterable, Identifiable {
     // this just controls how they're rendered when the user picks USD.
     private static let usdPerJpy: Double = 1.0 / 150.0
 
+    // Quick "received amount" denominations, expressed in the underlying yen.
+    // USD values are derived from the conversion rate so they render as
+    // $1 / $5 / $10 / $50 / $100.
+    var quickAmounts: [Int] {
+        switch self {
+        case .yen:
+            return [100, 500, 1000, 5000, 10000]
+        case .dollar:
+            return [1, 5, 10, 50, 100].map { Int((Double($0) / Self.usdPerJpy).rounded()) }
+        }
+    }
+
     func format(_ amount: Int) -> String {
         switch self {
         case .yen:

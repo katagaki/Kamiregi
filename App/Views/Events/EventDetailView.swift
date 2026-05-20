@@ -63,7 +63,10 @@ struct EventDetailView: View {
                                 Circle()
                                     .stroke(Color.orange.opacity(0.35), lineWidth: 5)
                                 Circle()
-                                    .trim(from: 0, to: day.stockTotal > 0 ? CGFloat(day.stockLeft) / CGFloat(day.stockTotal) : 1)
+                                    .trim(
+                                        from: 0,
+                                        to: day.stockTotal > 0 ? CGFloat(day.stockLeft) / CGFloat(day.stockTotal) : 1
+                                    )
                                     .stroke(Brand.tint, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                                     .rotationEffect(.degrees(-90))
                                 Text("\(day.stockLeft)")

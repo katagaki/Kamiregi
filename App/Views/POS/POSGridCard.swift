@@ -4,10 +4,11 @@ struct POSGridCard: View {
     @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var item: InventoryItem
     var day: EventDay
+    var cart: CartStore
     var onAdd: () -> Void
 
     var body: some View {
-        let remaining = item.stock(on: day)?.remaining ?? 0
+        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
         let oos = remaining == 0
         Button(action: onAdd) {
             VStack(alignment: .leading, spacing: 0) {
@@ -50,6 +51,7 @@ struct POSGridCard: View {
                         .background(Color.black.opacity(0.85), in: Capsule())
                 }
             }
+            .shadow(color: .secondary.opacity(0.1), radius: 5, x: 0, y: 3)
         }
         .buttonStyle(.plain)
         .disabled(false)

@@ -60,9 +60,9 @@ struct POSView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 16)], spacing: 16) {
                 ForEach(sortedItems, id: \.id) { item in
-                    POSGridCard(item: item, day: day) { tap(item) }
+                    POSGridCard(item: item, day: day, cart: cart) { tap(item) }
                 }
             }
             .padding(16)
@@ -72,12 +72,12 @@ struct POSView: View {
 
     private var listContent: some View {
         List(sortedItems, id: \.id) { item in
-            POSListRow(item: item, day: day) { tap(item) }
+            POSListRow(item: item, day: day, cart: cart) { tap(item) }
         }
     }
 
     private func tap(_ item: InventoryItem) {
-        let remaining = item.stock(on: day)?.remaining ?? 0
+        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }
 }

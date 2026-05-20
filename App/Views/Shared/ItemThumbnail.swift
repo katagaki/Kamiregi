@@ -39,6 +39,6 @@ struct ItemThumbnail: View {
         ("#EBE3FF", "#6A3FB0"),
         ("#FFE2EE", "#B43374"),
         ("#FFE9CF", "#9C5F00"),
-        ("#E6F4F1", "#1A6E5E"),
+        ("#E6F4F1", "#1A6E5E")
     ]
 }

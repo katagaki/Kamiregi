@@ -20,6 +20,7 @@ struct OshinagakiView: View {
                             imageData: event.oshinagakiImage,
                             items: event.items,
                             day: day,
+                            cart: cart,
                             onTap: handleTap
                         )
                         .padding(.horizontal, 16)
@@ -76,7 +77,7 @@ struct OshinagakiView: View {
     }
 
     private func handleTap(_ item: InventoryItem) {
-        let remaining = item.stock(on: day)?.remaining ?? 0
+        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }
 }
