@@ -1,5 +1,20 @@
 import SwiftUI
 
+// Aspect ratio used to lay out the Oshinagaki canvas. Matches the stored
+// image's natural ratio so tap regions (stored in unit space) stay aligned;
+// falls back to a portrait placeholder when no image is set.
+enum OshinagakiLayout {
+    static let placeholderAspect = CGSize(width: 1.0, height: 1.34)
+
+    static func aspect(for imageData: Data?) -> CGSize {
+        if let data = imageData, let uiImage = UIImage(data: data),
+           uiImage.size.width > 0, uiImage.size.height > 0 {
+            return uiImage.size
+        }
+        return placeholderAspect
+    }
+}
+
 // Read-only canvas that draws the stored Oshinagaki image and overlays each
 // item's tap region. Tapping a region calls `onTap` with the corresponding item.
 struct OshinagakiCanvas: View {
@@ -32,14 +47,7 @@ struct OshinagakiCanvas: View {
                     .stroke(Color(.separator), lineWidth: 0.5)
             )
         }
-        .aspectRatio(canvasAspect, contentMode: .fit)
-    }
-
-    private var canvasAspect: CGSize {
-        if let data = imageData, let uiImage = UIImage(data: data), uiImage.size.width > 0, uiImage.size.height > 0 {
-            return uiImage.size
-        }
-        return CGSize(width: 1.0, height: 1.34)
+        .aspectRatio(OshinagakiLayout.aspect(for: imageData), contentMode: .fit)
     }
 
     private var itemsWithRegions: [InventoryItem] {

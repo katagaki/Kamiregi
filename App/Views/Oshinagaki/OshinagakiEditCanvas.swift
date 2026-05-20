@@ -35,14 +35,7 @@ struct OshinagakiEditCanvas: View {
                     .stroke(Color(.separator), lineWidth: 0.5)
             )
         }
-        .aspectRatio(canvasAspect, contentMode: .fit)
-    }
-
-    private var canvasAspect: CGSize {
-        if let data = imageData, let uiImage = UIImage(data: data), uiImage.size.width > 0, uiImage.size.height > 0 {
-            return uiImage.size
-        }
-        return CGSize(width: 1.0, height: 1.34)
+        .aspectRatio(OshinagakiLayout.aspect(for: imageData), contentMode: .fit)
     }
 
     private var itemsWithRegions: [InventoryItem] {
