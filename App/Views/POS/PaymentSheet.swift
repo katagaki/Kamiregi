@@ -15,8 +15,6 @@ struct PaymentSheet: View {
     @State private var confirmedTx: SaleTransaction?
     @State private var showConfirmed = false
 
-    private let quickAmounts = [1000, 2000, 3000, 4000, 5000, 10000]
-
     var change: Int { max(0, paid - cart.subtotal) }
 
     var body: some View {
@@ -49,7 +47,7 @@ struct PaymentSheet: View {
                         .disabled(paid == 0)
                     }
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
-                        ForEach(quickAmounts, id: \.self) { amount in
+                        ForEach(currency.quickAmounts, id: \.self) { amount in
                             Button {
                                 paid += amount
                             } label: {
