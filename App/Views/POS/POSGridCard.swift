@@ -51,6 +51,7 @@ struct POSGridCard: View {
                         .background(Color.black.opacity(0.85), in: Capsule())
                 }
             }
+            .shadow(color: .secondary.opacity(0.1), radius: 5, x: 0, y: 3)
         }
         .buttonStyle(.plain)
         .disabled(false)

@@ -17,24 +17,25 @@ struct POSListRow: View {
                     HStack(spacing: 8) {
                         Text(item.name)
                             .font(.body.weight(.semibold))
+                            .tint(.primary)
                         StockPill(stock: remaining)
                     }
                     Text(item.sub)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .tint(.secondary)
                 }
                 Spacer(minLength: 8)
                 Text(item.price > 0 ? currency.format(item.price) : String(localized: "items.free"))
                     .font(.body.weight(.semibold))
+                    .tint(.primary)
                     .monospacedDigit()
                 Image(systemName: "plus.circle.fill")
                     .font(.title2)
-                    .foregroundStyle(oos ? Color.secondary : Brand.tint)
+                    .tint(oos ? Color.secondary : Brand.tint)
             }
             .opacity(oos ? 0.5 : 1)
             .padding(.vertical, 2)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
     }
 }

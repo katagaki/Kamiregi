@@ -60,7 +60,7 @@ struct POSView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 16)], spacing: 16) {
                 ForEach(sortedItems, id: \.id) { item in
                     POSGridCard(item: item, day: day, cart: cart) { tap(item) }
                 }

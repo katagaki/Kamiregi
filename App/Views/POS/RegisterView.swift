@@ -20,8 +20,8 @@ struct RegisterView: View {
                 ContentUnavailableView("pos.title", systemImage: "cart")
             } else {
                 switch mode {
-                case .grid:       gridContent
-                case .list:       listContent
+                case .grid: gridContent
+                case .list: listContent
                 case .oshinagaki: oshinagakiContent
                 }
             }
@@ -90,7 +90,6 @@ struct RegisterView: View {
         List(sortedItems, id: \.id) { item in
             POSListRow(item: item, day: day, cart: cart) { tap(item) }
         }
-        .listStyle(.plain)
     }
 
     @ViewBuilder
