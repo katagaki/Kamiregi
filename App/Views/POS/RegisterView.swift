@@ -90,6 +90,7 @@ struct RegisterView: View {
         List(sortedItems, id: \.id) { item in
             POSListRow(item: item, day: day, cart: cart) { tap(item) }
         }
+        .listStyle(.plain)
     }
 
     @ViewBuilder
