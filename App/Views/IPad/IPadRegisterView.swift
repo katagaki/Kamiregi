@@ -133,21 +133,13 @@ struct IPadRegisterView: View {
                     }
                 }
             case .oshinagaki:
-                ScrollView {
-                    HStack {
-                        Spacer()
-                        OshinagakiCanvas(
-                            imageData: event.oshinagakiImage,
-                            items: event.items,
-                            day: day,
-                            cart: cart,
-                            onTap: tap
-                        )
-                        .frame(maxWidth: 540)
-                        Spacer()
-                    }
-                    .padding(20)
-                }
+                ZoomableOshinagakiCanvas(
+                    imageData: event.oshinagakiImage,
+                    items: event.items,
+                    day: day,
+                    cart: cart,
+                    onTap: tap
+                )
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

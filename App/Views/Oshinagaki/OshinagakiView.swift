@@ -14,20 +14,13 @@ struct OshinagakiView: View {
             if event.oshinagakiImage == nil && event.items.allSatisfy({ !$0.hasRegion }) {
                 emptyState
             } else {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        OshinagakiCanvas(
-                            imageData: event.oshinagakiImage,
-                            items: event.items,
-                            day: day,
-                            cart: cart,
-                            onTap: handleTap
-                        )
-                        .padding(.horizontal, 16)
-                    }
-                    .padding(.top, 12)
-                    .padding(.bottom, 120)
-                }
+                ZoomableOshinagakiCanvas(
+                    imageData: event.oshinagakiImage,
+                    items: event.items,
+                    day: day,
+                    cart: cart,
+                    onTap: handleTap
+                )
             }
         }
         .background(Color(.systemGroupedBackground))

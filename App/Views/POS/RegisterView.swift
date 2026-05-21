@@ -106,20 +106,13 @@ struct RegisterView: View {
                 .buttonStyle(.borderedProminent)
             }
         } else {
-            ScrollView {
-                VStack(spacing: 16) {
-                    OshinagakiCanvas(
-                        imageData: event.oshinagakiImage,
-                        items: event.items,
-                        day: day,
-                        cart: cart,
-                        onTap: tap
-                    )
-                    .padding(.horizontal, 16)
-                }
-                .padding(.top, 12)
-                .padding(.bottom, 120)
-            }
+            ZoomableOshinagakiCanvas(
+                imageData: event.oshinagakiImage,
+                items: event.items,
+                day: day,
+                cart: cart,
+                onTap: tap
+            )
         }
     }
 

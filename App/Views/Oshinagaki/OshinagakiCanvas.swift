@@ -15,6 +15,26 @@ enum OshinagakiLayout {
     }
 }
 
+struct ZoomableOshinagakiCanvas: View {
+    var imageData: Data?
+    var items: [InventoryItem]
+    var day: EventDay
+    var cart: CartStore
+    var onTap: (InventoryItem) -> Void
+
+    var body: some View {
+        ZoomableScrollView(aspect: OshinagakiLayout.aspect(for: imageData)) {
+            OshinagakiCanvas(
+                imageData: imageData,
+                items: items,
+                day: day,
+                cart: cart,
+                onTap: onTap
+            )
+        }
+    }
+}
+
 // Read-only canvas that draws the stored Oshinagaki image and overlays each
 // item's tap region. Tapping a region calls `onTap` with the corresponding item.
 struct OshinagakiCanvas: View {
@@ -41,11 +61,6 @@ struct OshinagakiCanvas: View {
                         .position(x: frame.midX, y: frame.midY)
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .stroke(Color(.separator), lineWidth: 0.5)
-            )
         }
         .aspectRatio(OshinagakiLayout.aspect(for: imageData), contentMode: .fit)
     }

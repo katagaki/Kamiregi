@@ -14,6 +14,7 @@ struct SettingsMenu: View {
                 Text("settings.currency")
             }
             .pickerStyle(.inline)
+            .labelsVisibility(.visible)
 
             Toggle(isOn: $showReceiptScreen) {
                 Label("settings.showReceiptScreen", systemImage: "checkmark.seal")
