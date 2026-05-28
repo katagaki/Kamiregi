@@ -1,9 +1,6 @@
 import SwiftUI
 import UIKit
 
-// Aspect ratio used to lay out the Oshinagaki canvas. Matches the stored
-// image's natural ratio so tap regions (stored in unit space) stay aligned;
-// falls back to a portrait placeholder when no image is set.
 enum OshinagakiLayout {
     static let placeholderAspect = CGSize(width: 1.0, height: 1.34)
 
@@ -36,8 +33,6 @@ struct ZoomableOshinagakiCanvas: View {
     }
 }
 
-// Read-only canvas that draws the stored Oshinagaki image and overlays each
-// item's tap region. Tapping a region calls `onTap` with the corresponding item.
 struct OshinagakiCanvas: View {
     var imageData: Data?
     var items: [InventoryItem]
@@ -87,6 +82,7 @@ private struct OshinagakiTapRegion: View {
     var day: EventDay
     var cart: CartStore
     var onTap: () -> Void
+    @State private var isPressed = false
 
     var body: some View {
         let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
@@ -96,6 +92,9 @@ private struct OshinagakiTapRegion: View {
         ZStack {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(oos ? Color.black.opacity(0.35) : Color.clear)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Brand.tint.opacity(0.2))
+                .opacity(isPressed ? 1 : 0)
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(strokeColor.opacity(0.6), lineWidth: 1.5)
             if oos {
@@ -108,26 +107,23 @@ private struct OshinagakiTapRegion: View {
             }
         }
         .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(SingleTouchTapView(onTap: onTap))
+        .animation(.easeOut(duration: 0.1), value: isPressed)
+        .overlay(SingleTouchTapView(onTap: onTap, onPressChange: { isPressed = $0 }))
     }
 }
 
-// A transparent tap target backed by a UITapGestureRecognizer that requires
-// exactly one touch. A SwiftUI Button (or onTapGesture) fires on touch-up
-// regardless of how many fingers were down, so resting two fingers on a region
-// to start a pinch would trigger the tap. Requiring a single touch makes the
-// recognizer fail the moment a second finger lands, letting the enclosing
-// scroll view's pinch gesture take over instead.
 private struct SingleTouchTapView: UIViewRepresentable {
     var onTap: () -> Void
+    var onPressChange: (Bool) -> Void
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onTap: onTap)
     }
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
+    func makeUIView(context: Context) -> TouchTrackingView {
+        let view = TouchTrackingView()
         view.backgroundColor = .clear
+        view.onPressChange = onPressChange
         let tap = UITapGestureRecognizer(
             target: context.coordinator,
             action: #selector(Coordinator.handleTap)
@@ -138,8 +134,9 @@ private struct SingleTouchTapView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
+    func updateUIView(_ uiView: TouchTrackingView, context: Context) {
         context.coordinator.onTap = onTap
+        uiView.onPressChange = onPressChange
     }
 
     final class Coordinator: NSObject {
@@ -152,5 +149,25 @@ private struct SingleTouchTapView: UIViewRepresentable {
         @objc func handleTap() {
             onTap()
         }
+    }
+}
+
+private final class TouchTrackingView: UIView {
+    var onPressChange: (Bool) -> Void = { _ in }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        let active = event?.allTouches?.filter { $0.phase != .ended && $0.phase != .cancelled }.count ?? 1
+        onPressChange(active == 1)
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        onPressChange(false)
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        onPressChange(false)
     }
 }
