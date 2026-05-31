@@ -1,6 +1,11 @@
 import SwiftUI
 
 struct POSCartBar: View {
+    /// Height the collapsed bar occupies (header height + bottom padding).
+    /// Used by parent views to reserve a constant safe-area inset so that
+    /// expanding the cart overlays content instead of reshaping it.
+    static let collapsedHeight: CGFloat = 64
+
     @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var cart: CartStore
     var onCheckout: () -> Void

@@ -25,6 +25,9 @@ struct OshinagakiView: View {
         }
         .background(Color(.systemGroupedBackground))
         .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: POSCartBar.collapsedHeight)
+        }
+        .overlay(alignment: .bottom) {
             POSCartBar(cart: cart) { showPayment = true }
         }
         .navigationTitle("oshinagaki.title")
