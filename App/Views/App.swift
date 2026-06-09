@@ -43,9 +43,6 @@ struct KamicashApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .task {
-                    await SampleData.seedIfEmpty(container: sharedModelContainer)
-                }
         }
         .modelContainer(sharedModelContainer)
     }

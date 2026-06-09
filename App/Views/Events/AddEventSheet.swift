@@ -5,13 +5,12 @@ struct AddEventSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
-    @State private var name: String = "コミティア150"
-    @State private var venue: String = "東京ビッグサイト"
-    @State private var booth: String = "え-21b"
+    @State private var name: String = ""
+    @State private var venue: String = ""
+    @State private var booth: String = ""
     @State private var selectedColor: String = Brand.paletteSwatches[0]
     @State private var draftDays: [DraftDay] = [
-        DraftDay(date: Self.date(year: 2026, month: 5, day: 5), label: "初日"),
-        DraftDay(date: Self.date(year: 2026, month: 5, day: 6), label: "2日目")
+        DraftDay(date: Date(), label: "初日")
     ]
 
     var body: some View {
@@ -91,10 +90,6 @@ struct AddEventSheet: View {
         context.insert(event)
         try? context.save()
         dismiss()
-    }
-
-    private static func date(year: Int, month: Int, day: Int) -> Date {
-        Calendar.current.date(from: DateComponents(year: year, month: month, day: day)) ?? Date()
     }
 }
 

@@ -602,22 +602,6 @@
         }
       }
     },
-    "event.detail.receipt.qr" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show receipt QR"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レシートQRを表示"
-          }
-        }
-      }
-    },
     "event.detail.reservations" : {
       "localizations" : {
         "en" : {
@@ -2384,6 +2368,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "取引履歴"
+          }
+        }
+      }
+    },
+    "settings.createSampleData" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Sample Data"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サンプルデータを作成"
+          }
+        }
+      }
+    },
+    "settings.createSampleData.confirm.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create sample data?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サンプルデータを作成しますか？"
+          }
+        }
+      }
+    },
+    "settings.createSampleData.confirm.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sample events for Comic Market 108, COMITIA 156, and Happy Market will be added."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミックマーケット108、COMITIA156、ハッピーマーケットのサンプルイベントが追加されます。"
+          }
+        }
+      }
+    },
+    "settings.createSampleData.confirm.action" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作成"
           }
         }
       }

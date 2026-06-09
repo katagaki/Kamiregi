@@ -116,10 +116,6 @@ struct EventDetailView: View {
                 }
                 Button {
                 } label: {
-                    Label("event.detail.receipt.qr", systemImage: "qrcode")
-                }
-                Button {
-                } label: {
                     Label("event.detail.export", systemImage: "square.and.arrow.up")
                 }
             }
@@ -138,7 +134,6 @@ struct EventDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button("common.edit", systemImage: "pencil") { showEditEvent = true }
-                    Button("event.detail.receipt.qr", systemImage: "qrcode") { }
                     Button("event.detail.export", systemImage: "square.and.arrow.up") { }
                     Section {
                         Button("event.delete", systemImage: "trash", role: .destructive) {

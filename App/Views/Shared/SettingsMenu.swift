@@ -1,8 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsMenu: View {
+    @Environment(\.modelContext) private var context
     @AppStorage("currency") private var currency: Currency = .yen
     @AppStorage("showReceiptScreen") private var showReceiptScreen = true
+    @State private var showSampleDataConfirm = false
 
     var body: some View {
         Menu {
@@ -20,13 +23,33 @@ struct SettingsMenu: View {
                 Label("settings.showReceiptScreen", systemImage: "checkmark.seal")
             }
 
-            Divider()
+            Section {
+                Button {
+                    showSampleDataConfirm = true
+                } label: {
+                    Label("settings.createSampleData", systemImage: "sparkles")
+                }
+            }
 
-            Link(destination: URL(string: "https://github.com/Kamicash")!) {
-                Label("settings.sourceCode", systemImage: "chevron.left.forwardslash.chevron.right")
+            Section {
+                Link(destination: URL(string: "https://github.com/Kamicash")!) {
+                    Label("settings.sourceCode", systemImage: "chevron.left.forwardslash.chevron.right")
+                }
             }
         } label: {
             Label("common.more", systemImage: "ellipsis")
+        }
+        .confirmationDialog(
+            "settings.createSampleData.confirm.title",
+            isPresented: $showSampleDataConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("settings.createSampleData.confirm.action") {
+                SampleData.populate(context: context)
+            }
+            Button("common.cancel", role: .cancel) { }
+        } message: {
+            Text("settings.createSampleData.confirm.message")
         }
     }
 }
