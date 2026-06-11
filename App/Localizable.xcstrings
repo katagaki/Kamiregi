@@ -245,6 +245,23 @@
         }
       }
     },
+    "settings.keepScreenOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep screen on"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面を常にオン"
+          }
+        }
+      }
+    },
     "settings.showReceiptScreen" : {
       "extractionState" : "manual",
       "localizations" : {

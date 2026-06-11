@@ -76,6 +76,8 @@ struct POSCartBar: View {
                             Text(currency.format(line.subtotal))
                                 .font(.subheadline.weight(.semibold))
                                 .monospacedDigit()
+                                .lineLimit(1)
+                                .fixedSize()
                                 .contentTransition(.numericText())
                                 .animation(.smooth.speed(2.0), value: line.subtotal)
                         }
@@ -109,6 +111,8 @@ struct POSCartBar: View {
                     Text(currency.format(cart.subtotal))
                         .font(.title3.weight(.bold))
                         .monospacedDigit()
+                        .lineLimit(1)
+                        .fixedSize()
                         .contentTransition(.numericText())
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: cart.subtotal)
                 }
