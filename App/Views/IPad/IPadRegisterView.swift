@@ -29,7 +29,7 @@ struct IPadRegisterView: View {
             .overlay(alignment: .bottomTrailing) {
                 if compact && cart.count > 0 {
                     POSCartBar(cart: cart) { showPayment = true }
-                        .frame(maxWidth: 320)
+                        .frame(maxWidth: 400)
                         .padding()
                 }
             }
