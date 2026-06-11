@@ -5,6 +5,7 @@ struct SettingsMenu: View {
     @Environment(\.modelContext) private var context
     @AppStorage("currency") private var currency: Currency = .yen
     @AppStorage("showReceiptScreen") private var showReceiptScreen = true
+    @AppStorage("keepScreenOn") private var keepScreenOn = false
     @State private var showSampleDataConfirm = false
 
     var body: some View {
@@ -18,6 +19,10 @@ struct SettingsMenu: View {
             }
             .pickerStyle(.inline)
             .labelsVisibility(.visible)
+
+            Toggle(isOn: $keepScreenOn) {
+                Label("settings.keepScreenOn", systemImage: "sun.max")
+            }
 
             Toggle(isOn: $showReceiptScreen) {
                 Label("settings.showReceiptScreen", systemImage: "checkmark.seal")
