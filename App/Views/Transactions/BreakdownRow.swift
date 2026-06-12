@@ -9,7 +9,7 @@ struct BreakdownRow: View {
         let sold = item.stock(on: day)?.sold ?? 0
         let initial = item.stock(on: day)?.initial ?? 0
         let percent: Double = initial > 0 ? Double(sold) / Double(initial) : 0
-        let oos = (item.stock(on: day)?.remaining ?? 0) == 0
+        let oos = item.available(on: day) == 0
 
         VStack(spacing: 8) {
             HStack(spacing: 12) {

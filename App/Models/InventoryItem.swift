@@ -45,4 +45,8 @@ final class InventoryItem {
     func stock(on day: EventDay) -> DailyStock? {
         stocks.first { $0.day?.id == day.id }
     }
+
+    func available(on day: EventDay) -> Int {
+        max(0, (stock(on: day)?.remaining ?? 0) - day.reservedQty(of: self))
+    }
 }

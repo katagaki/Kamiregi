@@ -24,8 +24,18 @@ final class EventDay {
     }
 
     var stockTotal: Int { stocks.reduce(0) { $0 + $1.initial } }
-    var stockLeft: Int { stocks.reduce(0) { $0 + max(0, $1.initial - $1.sold) } }
+    var stockLeft: Int {
+        stocks.reduce(0) { sum, stock in
+            let reserved = stock.item.map { reservedQty(of: $0) } ?? 0
+            return sum + max(0, stock.initial - stock.sold - reserved)
+        }
+    }
     var soldCount: Int { stocks.reduce(0) { $0 + $1.sold } }
+
+    // Reserved items are committed to a reservation, picked up or not.
+    func reservedQty(of item: InventoryItem) -> Int {
+        reservations.reduce(0) { $0 + $1.reservedQty(of: item) }
+    }
     var revenue: Int {
         transactions.reduce(0) { $0 + $1.total }
     }

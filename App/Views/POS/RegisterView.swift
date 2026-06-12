@@ -93,6 +93,7 @@ struct RegisterView: View {
         List(sortedItems, id: \.id) { item in
             POSListRow(item: item, day: day, cart: cart) { tap(item) }
         }
+        .listStyle(.plain)
     }
 
     @ViewBuilder
@@ -120,7 +121,7 @@ struct RegisterView: View {
     }
 
     private func tap(_ item: InventoryItem) {
-        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
+        let remaining = max(0, item.available(on: day) - cart.qty(for: item))
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }
 }

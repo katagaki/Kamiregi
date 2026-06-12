@@ -85,17 +85,17 @@ private struct OshinagakiTapRegion: View {
     @State private var isPressed = false
 
     var body: some View {
-        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
+        let remaining = max(0, item.available(on: day) - cart.qty(for: item))
         let oos = remaining == 0
-        let strokeColor: Color = oos ? .red : Brand.tint
+        let strokeColor: Color = oos ? .red : .white
 
         ZStack {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(oos ? Color.black.opacity(0.35) : Color.clear)
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Brand.tint.opacity(0.2))
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.black.opacity(0.2))
                 .opacity(isPressed ? 1 : 0)
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(strokeColor.opacity(0.6), lineWidth: 1.5)
             if oos {
                 Text("pos.stock.sold_out")

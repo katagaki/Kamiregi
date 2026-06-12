@@ -93,7 +93,7 @@ struct IPadRegisterView: View {
         } message: {
             Text("oshinagaki.clear.confirm.message")
         }
-        .sheet(isPresented: $showEdit) {
+        .fullScreenCover(isPresented: $showEdit) {
             OshinagakiEditView(event: event, day: day)
         }
         .sheet(isPresented: $showPayment) {
@@ -131,6 +131,7 @@ struct IPadRegisterView: View {
                     List(sortedItems, id: \.id) { item in
                         POSListRow(item: item, day: day, cart: cart) { tap(item) }
                     }
+                    .listStyle(.plain)
                 }
             case .oshinagaki:
                 ZoomableOshinagakiCanvas(
@@ -203,7 +204,7 @@ struct IPadRegisterView: View {
     }
 
     private func tap(_ item: InventoryItem) {
-        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
+        let remaining = max(0, item.available(on: day) - cart.qty(for: item))
         if remaining == 0 { oosItem = item } else { cart.add(item) }
     }
 

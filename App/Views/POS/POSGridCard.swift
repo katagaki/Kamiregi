@@ -8,7 +8,7 @@ struct POSGridCard: View {
     var onAdd: () -> Void
 
     var body: some View {
-        let remaining = max(0, (item.stock(on: day)?.remaining ?? 0) - cart.qty(for: item))
+        let remaining = max(0, item.available(on: day) - cart.qty(for: item))
         let oos = remaining == 0
         Button(action: onAdd) {
             VStack(alignment: .leading, spacing: 0) {

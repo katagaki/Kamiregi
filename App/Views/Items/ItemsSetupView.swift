@@ -3,6 +3,7 @@ import SwiftData
 
 struct ItemsSetupView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.horizontalSizeClass) private var hSize
     @Bindable var event: Event
     @Bindable var day: EventDay
     @State private var selectedDayID: PersistentIdentifier?
@@ -19,7 +20,8 @@ struct ItemsSetupView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
             }
 
             Section {
@@ -55,12 +57,18 @@ struct ItemsSetupView: View {
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: Text("items.search.prompt"))
         .toolbar {
-            DefaultToolbarItem(kind: .search, placement: .bottomBar)
-            ToolbarSpacer(.fixed, placement: .bottomBar)
-            ToolbarItem(placement: .bottomBar) {
-                Button("common.add", systemImage: "plus") { showAddItem = true }
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.glassProminent)
+            if hSize == .regular {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("common.add", systemImage: "plus") { showAddItem = true }
+                }
+            } else {
+                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                ToolbarSpacer(.fixed, placement: .bottomBar)
+                ToolbarItem(placement: .bottomBar) {
+                    Button("common.add", systemImage: "plus") { showAddItem = true }
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glassProminent)
+                }
             }
         }
         .sheet(isPresented: $showAddItem) {

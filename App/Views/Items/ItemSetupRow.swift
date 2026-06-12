@@ -23,5 +23,6 @@ struct ItemSetupRow: View {
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 2)
+        .contentShape(Rectangle())
     }
 }

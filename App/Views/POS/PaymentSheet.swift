@@ -109,8 +109,7 @@ struct PaymentSheet: View {
         let transaction = SaleTransaction(
             number: cart.transactionNumber,
             timestamp: Date(),
-            total: cart.subtotal,
-            paid: paid
+            total: cart.subtotal
         )
         transaction.day = day
         for line in cart.lines {

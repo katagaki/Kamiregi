@@ -4,11 +4,13 @@ import SwiftData
 struct ReservationRow: View {
     @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var res: Reservation
+    var onEdit: () -> Void
     @State private var showConfirm = false
+    @State private var profileImage: UIImage?
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            Avatar(name: res.name, picked: res.pickedUp)
+            Avatar(name: res.name, image: profileImage, picked: res.pickedUp)
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(res.name)
@@ -24,18 +26,30 @@ struct ReservationRow: View {
                             .background(Color.green.opacity(0.18), in: Capsule())
                     }
                 }
-                Label {
-                    Text(res.handle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } icon: {
-                    Image(systemName: res.contact.systemImage)
-                        .foregroundStyle(res.contact.color)
-                        .font(.caption)
+                Text(res.handle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                if !res.lines.isEmpty {
+                    VStack(alignment: .leading, spacing: 3) {
+                        ForEach(res.sortedLines, id: \.id) { line in
+                            HStack(spacing: 6) {
+                                Text(line.displayName)
+                                Text(verbatim: "×\(line.qty)")
+                                    .foregroundStyle(.secondary)
+                                    .monospacedDigit()
+                            }
+                            .font(.footnote)
+                            .foregroundStyle(res.pickedUp ? .secondary : .primary)
+                        }
+                    }
+                    .padding(.top, 2)
                 }
-                Text(res.note)
-                    .font(.footnote)
-                    .foregroundStyle(res.pickedUp ? .secondary : .primary)
+                if !res.note.isEmpty {
+                    Text(res.note)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
             Spacer(minLength: 8)
             VStack(alignment: .trailing, spacing: 6) {
@@ -54,6 +68,15 @@ struct ReservationRow: View {
             }
         }
         .padding(.vertical, 2)
+        .contentShape(Rectangle())
+        .onTapGesture { onEdit() }
+        .task(id: "\(res.contactRaw)|\(res.handle)") {
+            guard res.contact == .sns else {
+                profileImage = nil
+                return
+            }
+            profileImage = await ProfileImageFetcher.shared.fetch(for: res.handle)
+        }
         .alert(
             res.pickedUp
                 ? LocalizedStringKey("reservations.confirm.revert.title")
@@ -66,23 +89,6 @@ struct ReservationRow: View {
                 res.pickedUp.toggle()
             }
             Button("common.cancel", role: .cancel) {}
-        }
-    }
-}
-
-extension ContactKind {
-    var systemImage: String {
-        switch self {
-        case .sns:  "at"
-        case .mail: "envelope"
-        case .tel:  "phone"
-        }
-    }
-    var color: Color {
-        switch self {
-        case .sns:  .purple
-        case .mail: .blue
-        case .tel:  .green
         }
     }
 }

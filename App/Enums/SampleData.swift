@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import SwiftData
+import UIKit
 
 enum SampleData {
     private struct ItemSeed {
@@ -9,6 +10,7 @@ enum SampleData {
         let price: Int
         let stock: Int
         let sold: Int
+        var region: CGRect?
     }
 
     private struct TransactionLineSeed {
@@ -20,8 +22,12 @@ enum SampleData {
     private struct TransactionSeed {
         let time: String
         let total: Int
-        let paid: Int
         let lines: [TransactionLineSeed]
+    }
+
+    private struct ReservationLineSeed {
+        let itemName: String
+        let qty: Int
     }
 
     private struct ReservationSeed {
@@ -29,27 +35,29 @@ enum SampleData {
         let handle: String
         let kind: ContactKind
         let note: String
-        let total: Int
+        let lines: [ReservationLineSeed]
+        let discount: Int
         let picked: Bool
     }
 
     @MainActor
     static func populate(context: ModelContext) {
-        seedComiket108(context: context)
-        seedHappyMarket(context: context)
-        seedComitia156(context: context)
+        seedBigSightEvent(context: context)
+        seedSmallerEvent(context: context)
+        seedSecondBigSightEvent(context: context)
         try? context.save()
     }
 
-    // MARK: コミックマーケット108
+    // MARK: 王子様即売会
 
-    private static func seedComiket108(context: ModelContext) {
+    private static func seedBigSightEvent(context: ModelContext) {
         let event = Event(
-            name: "コミックマーケット108",
+            name: "ハッピーマーケット110",
             venue: "東京ビッグサイト",
             booth: "東-ア21b",
             colorHex: "#FF5A4E"
         )
+        event.oshinagakiImage = UIImage(named: "H110")?.pngData()
         context.insert(event)
 
         let firstDate = makeDate(year: 2026, month: 8, day: 15)
@@ -59,83 +67,114 @@ enum SampleData {
         event.days = [day1, day2]
 
         let items: [ItemSeed] = [
-            ItemSeed(name: "夏の終わりに", sub: "B5新刊・100頁", price: 1200, stock: 60, sold: 18),
-            ItemSeed(name: "残響レコード", sub: "B5新刊・80頁", price: 1000, stock: 45, sold: 14),
-            ItemSeed(name: "海猫荘の夜", sub: "A5既刊・64頁", price: 800, stock: 26, sold: 8),
-            ItemSeed(name: "アクリルキーホルダー", sub: "4種 / 各", price: 600, stock: 82, sold: 22),
-            ItemSeed(name: "缶バッジセット", sub: "3個セット", price: 500, stock: 24, sold: 24),
-            ItemSeed(name: "ポストカード4種", sub: "4枚セット", price: 400, stock: 34, sold: 6),
-            ItemSeed(name: "ステッカー", sub: "1枚", price: 200, stock: 100, sold: 12),
-            ItemSeed(name: "おまけ無配", sub: "ペーパー", price: 0, stock: 80, sold: 30)
+            ItemSeed(name: "夏の終わりに", sub: "B5新刊・100頁", price: 1200, stock: 60, sold: 18,
+                     region: CGRect(x: 0.1510, y: 0.2129, width: 0.4101, height: 0.2001)),
+            ItemSeed(name: "残響レコード", sub: "B5新刊・80頁", price: 1000, stock: 45, sold: 14,
+                     region: CGRect(x: 0.5587, y: 0.2141, width: 0.4056, height: 0.1975)),
+            ItemSeed(name: "海猫荘の夜", sub: "A5既刊・64頁", price: 800, stock: 26, sold: 8,
+                     region: CGRect(x: 0.1537, y: 0.4676, width: 0.3867, height: 0.1975)),
+            ItemSeed(name: "アクリルキーホルダー", sub: "4種 / 各", price: 600, stock: 82, sold: 22,
+                     region: CGRect(x: 0.3876, y: 0.7204, width: 0.2398, height: 0.1160)),
+            ItemSeed(name: "缶バッジセット", sub: "3個セット", price: 500, stock: 24, sold: 24,
+                     region: CGRect(x: 0.1537, y: 0.7204, width: 0.2353, height: 0.1383)),
+            ItemSeed(name: "ポストカード4種", sub: "4枚セット", price: 400, stock: 34, sold: 6,
+                     region: CGRect(x: 0.6200, y: 0.7249, width: 0.3416, height: 0.1370)),
+            ItemSeed(name: "ステッカー", sub: "1枚", price: 200, stock: 100, sold: 12,
+                     region: CGRect(x: 0.6708, y: 0.4663, width: 0.2903, height: 0.2020)),
+            ItemSeed(name: "おまけ無配", sub: "ペーパー", price: 0, stock: 80, sold: 30,
+                     region: CGRect(x: 0.2425, y: 0.8631, width: 0.5137, height: 0.1167))
         ]
         seedItems(items, into: event, days: [day1, day2], context: context)
 
         let transactions: [TransactionSeed] = [
-            TransactionSeed(time: "10:14", total: 2400, paid: 3000, lines: [
+            TransactionSeed(time: "10:14", total: 2400, lines: [
                 TransactionLineSeed(itemName: "夏の終わりに", qty: 1, unitPrice: 1200),
                 TransactionLineSeed(itemName: "アクリルキーホルダー", qty: 2, unitPrice: 600)
             ]),
-            TransactionSeed(time: "10:21", total: 1000, paid: 1000, lines: [
+            TransactionSeed(time: "10:21", total: 1000, lines: [
                 TransactionLineSeed(itemName: "残響レコード", qty: 1, unitPrice: 1000)
             ]),
-            TransactionSeed(time: "10:33", total: 1600, paid: 2000, lines: [
+            TransactionSeed(time: "10:33", total: 1600, lines: [
                 TransactionLineSeed(itemName: "夏の終わりに", qty: 1, unitPrice: 1200),
                 TransactionLineSeed(itemName: "ステッカー", qty: 2, unitPrice: 200)
             ]),
-            TransactionSeed(time: "10:47", total: 3200, paid: 5000, lines: [
+            TransactionSeed(time: "10:47", total: 3200, lines: [
                 TransactionLineSeed(itemName: "夏の終わりに", qty: 1, unitPrice: 1200),
                 TransactionLineSeed(itemName: "残響レコード", qty: 1, unitPrice: 1000),
                 TransactionLineSeed(itemName: "海猫荘の夜", qty: 1, unitPrice: 800),
                 TransactionLineSeed(itemName: "ステッカー", qty: 1, unitPrice: 200)
             ]),
-            TransactionSeed(time: "11:02", total: 800, paid: 1000, lines: [
+            TransactionSeed(time: "11:02", total: 800, lines: [
                 TransactionLineSeed(itemName: "海猫荘の夜", qty: 1, unitPrice: 800)
             ]),
-            TransactionSeed(time: "11:09", total: 1700, paid: 2000, lines: [
+            TransactionSeed(time: "11:09", total: 1700, lines: [
                 TransactionLineSeed(itemName: "アクリルキーホルダー", qty: 2, unitPrice: 600),
                 TransactionLineSeed(itemName: "ポストカード4種", qty: 1, unitPrice: 400),
                 TransactionLineSeed(itemName: "ステッカー", qty: 1, unitPrice: 200)
             ]),
-            TransactionSeed(time: "11:24", total: 2000, paid: 2000, lines: [
+            TransactionSeed(time: "11:24", total: 2000, lines: [
                 TransactionLineSeed(itemName: "残響レコード", qty: 1, unitPrice: 1000),
                 TransactionLineSeed(itemName: "アクリルキーホルダー", qty: 1, unitPrice: 600),
                 TransactionLineSeed(itemName: "ポストカード4種", qty: 1, unitPrice: 400)
             ]),
-            TransactionSeed(time: "11:38", total: 1200, paid: 1500, lines: [
+            TransactionSeed(time: "11:38", total: 1200, lines: [
                 TransactionLineSeed(itemName: "夏の終わりに", qty: 1, unitPrice: 1200)
             ]),
-            TransactionSeed(time: "11:51", total: 600, paid: 1000, lines: [
+            TransactionSeed(time: "11:51", total: 600, lines: [
                 TransactionLineSeed(itemName: "アクリルキーホルダー", qty: 1, unitPrice: 600)
             ])
         ]
         seedTransactions(transactions, into: day1, on: firstDate, context: context)
 
-        let reservations: [ReservationSeed] = [
+        seedReservations(bigSightEventReservations, into: day1, items: event.items, context: context)
+    }
+
+    private static var bigSightEventReservations: [ReservationSeed] {
+        [
             ReservationSeed(
                 name: "山田 こはる", handle: "@koharu_y", kind: .sns,
-                note: "夏の終わりに ×2、海猫荘の夜 ×1", total: 3200, picked: false
+                note: "",
+                lines: [
+                    ReservationLineSeed(itemName: "夏の終わりに", qty: 2),
+                    ReservationLineSeed(itemName: "海猫荘の夜", qty: 1)
+                ],
+                discount: 0, picked: false
             ),
             ReservationSeed(
                 name: "佐藤 真央", handle: "mao.sato@…", kind: .mail,
-                note: "残響レコード ×1、ステッカー全種", total: 1400, picked: true
+                note: "ステッカー全種希望",
+                lines: [
+                    ReservationLineSeed(itemName: "残響レコード", qty: 1),
+                    ReservationLineSeed(itemName: "ステッカー", qty: 2)
+                ],
+                discount: 0, picked: true
             ),
             ReservationSeed(
                 name: "Anna Müller", handle: "+49 30 …", kind: .tel,
-                note: "新刊セット", total: 3000, picked: false
+                note: "新刊セット（早割）",
+                lines: [
+                    ReservationLineSeed(itemName: "夏の終わりに", qty: 1),
+                    ReservationLineSeed(itemName: "残響レコード", qty: 1),
+                    ReservationLineSeed(itemName: "海猫荘の夜", qty: 1)
+                ],
+                discount: 200, picked: false
             ),
             ReservationSeed(
                 name: "高橋 ゆず", handle: "@yuzu_dot", kind: .sns,
-                note: "夏の終わりに ×1", total: 1200, picked: false
+                note: "",
+                lines: [
+                    ReservationLineSeed(itemName: "夏の終わりに", qty: 1)
+                ],
+                discount: 0, picked: false
             )
         ]
-        seedReservations(reservations, into: day1, context: context)
     }
 
-    // MARK: ハッピーマーケット (架空イベント)
+    // MARK: ハッピーマーケット110 (架空イベント)
 
-    private static func seedHappyMarket(context: ModelContext) {
+    private static func seedSmallerEvent(context: ModelContext) {
         let event = Event(
-            name: "ハッピーマーケット",
+            name: "王子様即売会",
             venue: "池袋サンシャインシティ",
             booth: "H-05",
             colorHex: "#34C759"
@@ -157,37 +196,37 @@ enum SampleData {
         seedItems(items, into: event, days: [day], context: context)
 
         let transactions: [TransactionSeed] = [
-            TransactionSeed(time: "10:08", total: 1500, paid: 2000, lines: [
+            TransactionSeed(time: "10:08", total: 1500, lines: [
                 TransactionLineSeed(itemName: "ハッピーアンソロジー", qty: 1, unitPrice: 1500)
             ]),
-            TransactionSeed(time: "10:26", total: 2500, paid: 2500, lines: [
+            TransactionSeed(time: "10:26", total: 2500, lines: [
                 TransactionLineSeed(itemName: "ハッピーアンソロジー", qty: 1, unitPrice: 1500),
                 TransactionLineSeed(itemName: "アクリルスタンド", qty: 1, unitPrice: 1000)
             ]),
-            TransactionSeed(time: "10:59", total: 1050, paid: 1100, lines: [
+            TransactionSeed(time: "10:59", total: 1050, lines: [
                 TransactionLineSeed(itemName: "マスキングテープ", qty: 1, unitPrice: 450),
                 TransactionLineSeed(itemName: "ラバーストラップ", qty: 1, unitPrice: 600)
             ]),
-            TransactionSeed(time: "11:31", total: 800, paid: 1000, lines: [
+            TransactionSeed(time: "11:31", total: 800, lines: [
                 TransactionLineSeed(itemName: "ミニ色紙", qty: 1, unitPrice: 800)
             ]),
-            TransactionSeed(time: "12:14", total: 3300, paid: 3500, lines: [
+            TransactionSeed(time: "12:14", total: 3300, lines: [
                 TransactionLineSeed(itemName: "ハッピーアンソロジー", qty: 1, unitPrice: 1500),
                 TransactionLineSeed(itemName: "アクリルスタンド", qty: 1, unitPrice: 1000),
                 TransactionLineSeed(itemName: "ミニ色紙", qty: 1, unitPrice: 800)
             ]),
-            TransactionSeed(time: "13:45", total: 900, paid: 1000, lines: [
+            TransactionSeed(time: "13:45", total: 900, lines: [
                 TransactionLineSeed(itemName: "マスキングテープ", qty: 2, unitPrice: 450)
             ])
         ]
         seedTransactions(transactions, into: day, on: date, context: context)
     }
 
-    // MARK: COMITIA156
+    // MARK: COMICNET 2026
 
-    private static func seedComitia156(context: ModelContext) {
+    private static func seedSecondBigSightEvent(context: ModelContext) {
         let event = Event(
-            name: "COMITIA156",
+            name: "COMICNET 2026",
             venue: "東京ビッグサイト",
             booth: "そ-12a",
             colorHex: "#5A8DEE",
@@ -210,21 +249,21 @@ enum SampleData {
         seedItems(items, into: event, days: [day], context: context)
 
         let transactions: [TransactionSeed] = [
-            TransactionSeed(time: "10:05", total: 1100, paid: 1500, lines: [
+            TransactionSeed(time: "10:05", total: 1100, lines: [
                 TransactionLineSeed(itemName: "ことばの庭", qty: 1, unitPrice: 1100)
             ]),
-            TransactionSeed(time: "10:40", total: 1800, paid: 2000, lines: [
+            TransactionSeed(time: "10:40", total: 1800, lines: [
                 TransactionLineSeed(itemName: "ことばの庭", qty: 1, unitPrice: 1100),
                 TransactionLineSeed(itemName: "雨上がりの街", qty: 1, unitPrice: 700)
             ]),
-            TransactionSeed(time: "11:15", total: 800, paid: 800, lines: [
+            TransactionSeed(time: "11:15", total: 800, lines: [
                 TransactionLineSeed(itemName: "ラフスケッチ集", qty: 1, unitPrice: 500),
                 TransactionLineSeed(itemName: "クリアしおり", qty: 1, unitPrice: 300)
             ]),
-            TransactionSeed(time: "12:02", total: 2200, paid: 2500, lines: [
+            TransactionSeed(time: "12:02", total: 2200, lines: [
                 TransactionLineSeed(itemName: "ことばの庭", qty: 2, unitPrice: 1100)
             ]),
-            TransactionSeed(time: "13:30", total: 1400, paid: 1500, lines: [
+            TransactionSeed(time: "13:30", total: 1400, lines: [
                 TransactionLineSeed(itemName: "雨上がりの街", qty: 1, unitPrice: 700),
                 TransactionLineSeed(itemName: "クリアしおり", qty: 1, unitPrice: 300),
                 TransactionLineSeed(itemName: "ポストカード", qty: 1, unitPrice: 400)
@@ -243,7 +282,7 @@ enum SampleData {
                 price: seed.price,
                 sortIndex: idx
             )
-            item.regionRect = gridRegion(at: idx, count: seeds.count)
+            item.regionRect = seed.region ?? gridRegion(at: idx, count: seeds.count)
             event.items.append(item)
 
             for (dayIdx, day) in days.enumerated() {
@@ -277,8 +316,7 @@ enum SampleData {
             let transaction = SaleTransaction(
                 number: idx + 1,
                 timestamp: parseTime(seed.time, on: date),
-                total: seed.total,
-                paid: seed.paid
+                total: seed.total
             )
             transaction.day = day
             for lineSeed in seed.lines {
@@ -294,18 +332,30 @@ enum SampleData {
         }
     }
 
-    private static func seedReservations(_ seeds: [ReservationSeed], into day: EventDay, context: ModelContext) {
+    private static func seedReservations(
+        _ seeds: [ReservationSeed],
+        into day: EventDay,
+        items: [InventoryItem],
+        context: ModelContext
+    ) {
         for seed in seeds {
             let reservation = Reservation(
                 name: seed.name,
                 handle: seed.handle,
                 contact: seed.kind,
                 note: seed.note,
-                total: seed.total,
+                discount: seed.discount,
                 pickedUp: seed.picked
             )
             reservation.day = day
             context.insert(reservation)
+            for lineSeed in seed.lines {
+                guard let item = items.first(where: { $0.name == lineSeed.itemName }) else { continue }
+                let line = ReservationLine(item: item, qty: lineSeed.qty)
+                line.reservation = reservation
+                context.insert(line)
+            }
+            reservation.total = max(0, reservation.itemsTotal - reservation.discount)
         }
     }
 

@@ -47,7 +47,7 @@ struct ConfirmedSheet: View {
                         Text(currency.format(paid)).monospacedDigit()
                     }
                     LabeledContent("payment.change") {
-                        Text(currency.format(transaction.change))
+                        Text(currency.format(max(0, paid - transaction.total)))
                             .monospacedDigit()
                             .foregroundStyle(Brand.tint)
                             .fontWeight(.semibold)

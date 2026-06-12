@@ -11,7 +11,8 @@ struct KamicashApp: App {
             DailyStock.self,
             SaleTransaction.self,
             TransactionLine.self,
-            Reservation.self
+            Reservation.self,
+            ReservationLine.self
         ])
         // Future work - re-enable iCloud / CloudKit sync.
         //

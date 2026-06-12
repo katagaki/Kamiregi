@@ -12,31 +12,37 @@ struct IPadSidebar: View {
     @Binding var section: IPadSection
     @Binding var showAddEvent: Bool
     @State private var searchText = ""
+    @State private var expandedEventID: PersistentIdentifier?
 
     var body: some View {
-        List(selection: $selectedEventID) {
+        List {
             Section("events.title") {
                 ForEach(filteredEvents, id: \.persistentModelID) { event in
-                    EventSidebarRow(event: event, isLive: isLive(event))
-                        .tag(event.persistentModelID as PersistentIdentifier?)
-                }
-            }
-
-            if let event = activeEvent, searchText.isEmpty {
-                Section(event.name) {
-                    ForEach(subNavRows(for: event), id: \.id) { row in
-                        Button { section = row.id } label: {
-                            Label {
-                                Text(row.labelKey)
-                                    .foregroundStyle(.primary)
-                                    .fontWeight(section == row.id ? .semibold : .regular)
-                            } icon: {
-                                Image(systemName: row.icon)
-                                    .foregroundStyle(section == row.id ? Brand.tint : .secondary)
+                    DisclosureGroup(isExpanded: expansion(for: event)) {
+                        ForEach(subNavRows(for: event), id: \.id) { row in
+                            let isCurrent = section == row.id
+                                && selectedEventID == event.persistentModelID
+                            Button {
+                                selectedEventID = event.persistentModelID
+                                section = row.id
+                            } label: {
+                                Label {
+                                    Text(row.labelKey)
+                                        .foregroundStyle(.primary)
+                                        .fontWeight(isCurrent ? .semibold : .regular)
+                                } icon: {
+                                    Image(systemName: row.icon)
+                                        .foregroundStyle(isCurrent ? Brand.tint : .secondary)
+                                }
+                                .badge(row.badge ?? 0)
                             }
-                            .badge(row.badge ?? 0)
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
+                    } label: {
+                        EventSidebarRow(event: event, isLive: event.isLive)
+                            .contextMenu {
+                                ExportMenu(event: event, currentDay: exportDay(for: event))
+                            }
                     }
                 }
             }
@@ -47,6 +53,9 @@ struct IPadSidebar: View {
             if let event = events.first(where: { $0.persistentModelID == newID }) {
                 selectedDayID = event.sortedDays.first?.persistentModelID
             }
+        }
+        .onAppear {
+            if expandedEventID == nil { expandedEventID = selectedEventID }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -60,6 +69,16 @@ struct IPadSidebar: View {
         }
     }
 
+    // Tapping an event toggles its expansion; only a sub-nav button navigates.
+    private func expansion(for event: Event) -> Binding<Bool> {
+        Binding(
+            get: { expandedEventID == event.persistentModelID },
+            set: { expanded in
+                expandedEventID = expanded ? event.persistentModelID : nil
+            }
+        )
+    }
+
     private var activeEvent: Event? {
         events.first { $0.persistentModelID == selectedEventID }
     }
@@ -68,8 +87,9 @@ struct IPadSidebar: View {
         activeEvent?.sortedDays.first { $0.persistentModelID == selectedDayID }
     }
 
-    private func isLive(_ event: Event) -> Bool {
-        !event.isPastEvent && event == events.first(where: { !$0.isPastEvent })
+    // CSV exports the selected day; falls back to the event's first day for non-active rows.
+    private func exportDay(for event: Event) -> EventDay? {
+        event.persistentModelID == selectedEventID ? activeDay : nil
     }
 
     private var filteredEvents: [Event] {
@@ -90,8 +110,9 @@ struct IPadSidebar: View {
     }
 
     private func subNavRows(for event: Event) -> [SubNavRow] {
-        let txCount = activeDay?.transactions.count
-        let resCount = activeDay?.reservations.count
+        let day = event.persistentModelID == selectedEventID ? activeDay : event.sortedDays.first
+        let txCount = day?.transactions.count
+        let resCount = day?.reservations.count
         return [
             SubNavRow(id: .register, labelKey: "pos.title", icon: "cart", badge: nil),
             SubNavRow(id: .items, labelKey: "event.detail.items", icon: "bag", badge: event.items.count),
@@ -119,5 +140,6 @@ private struct EventSidebarRow: View {
                     .background(Color.green.opacity(0.18), in: Capsule())
             }
         }
+        .contentShape(Rectangle())
     }
 }

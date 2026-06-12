@@ -7,7 +7,6 @@ struct EventDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var event: Event
     @State private var selectedDayID: PersistentIdentifier?
-    @State private var showAddDay = false
     @State private var showEditEvent = false
     @State private var showDeleteConfirm = false
 
@@ -20,11 +19,8 @@ struct EventDetailView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-            } header: {
-                Text("event.detail.location")
-            } footer: {
-                Text("\(event.venue) · \(event.booth)")
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
             }
 
             if let day = currentDay {
@@ -107,20 +103,11 @@ struct EventDetailView: View {
                     }
                 }
             }
-
-            Section("event.detail.settings") {
-                Button {
-                    showAddDay = true
-                } label: {
-                    Label("event.detail.add.day", systemImage: "calendar.badge.plus")
-                }
-                Button {
-                } label: {
-                    Label("event.detail.export", systemImage: "square.and.arrow.up")
-                }
-            }
         }
+        .listSectionSpacing(.compact)
+        .contentMargins(.top, 0, for: .scrollContent)
         .navigationTitle(event.name)
+        .navigationSubtitle("\(event.venue) · \(event.booth)")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: EventDetailRoute.self) { route in
             switch route {
@@ -134,7 +121,7 @@ struct EventDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button("common.edit", systemImage: "pencil") { showEditEvent = true }
-                    Button("event.detail.export", systemImage: "square.and.arrow.up") { }
+                    ExportMenu(event: event, currentDay: currentDay)
                     Section {
                         Button("event.delete", systemImage: "trash", role: .destructive) {
                             showDeleteConfirm = true
@@ -144,9 +131,6 @@ struct EventDetailView: View {
                     Image(systemName: "ellipsis")
                 }
             }
-        }
-        .sheet(isPresented: $showAddDay) {
-            AddEventDaySheet(event: event)
         }
         .sheet(isPresented: $showEditEvent) {
             EditEventSheet(event: event)
@@ -187,45 +171,5 @@ enum EventDetailRoute: Hashable {
 extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil
-    }
-}
-
-private struct AddEventDaySheet: View {
-    @Environment(\.modelContext) private var context
-    @Environment(\.dismiss) private var dismiss
-    @Bindable var event: Event
-
-    @State private var date: Date = Date()
-    @State private var label: String = ""
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("event.add.days") {
-                    DatePicker("event.detail.day", selection: $date, displayedComponents: .date)
-                    TextField("event.detail.add.day.label.placeholder", text: $label)
-                }
-            }
-            .navigationTitle("event.detail.add.day")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm, action: save)
-                        .accessibilityLabel("common.save")
-                        .disabled(label.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-            }
-        }
-    }
-
-    private func save() {
-        let day = EventDay(date: date, label: label.trimmingCharacters(in: .whitespaces))
-        event.days.append(day)
-        context.insert(day)
-        try? context.save()
-        dismiss()
     }
 }

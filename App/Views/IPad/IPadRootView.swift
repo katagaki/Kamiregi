@@ -29,9 +29,12 @@ struct IPadRootView: View {
 
     private func ensureSelection() {
         if selectedEventID == nil {
-            if let first = events.first(where: { !$0.isPastEvent }) ?? events.first {
-                selectedEventID = first.persistentModelID
-                selectedDayID = first.sortedDays.first?.persistentModelID
+            let preferred = events.first { $0.timing == .today }
+                ?? events.first { $0.timing == .upcoming }
+                ?? events.first
+            if let preferred {
+                selectedEventID = preferred.persistentModelID
+                selectedDayID = preferred.sortedDays.first?.persistentModelID
             }
         }
     }

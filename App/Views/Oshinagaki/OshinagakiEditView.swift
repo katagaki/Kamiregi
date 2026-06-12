@@ -19,10 +19,8 @@ struct OshinagakiEditView: View {
                     items: event.items,
                     selectedItemID: $selectedItemID
                 )
-                .padding(.horizontal)
-                .padding(.top)
 
-                Divider().padding(.top, 12)
+                Divider()
 
                 itemPicker
             }

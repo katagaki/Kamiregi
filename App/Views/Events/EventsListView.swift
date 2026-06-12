@@ -38,15 +38,24 @@ struct EventsListView: View {
     private var content: some View {
         if events.isEmpty {
             EventsEmptyState(onAdd: { showAdd = true })
-        } else if filteredActive.isEmpty && filteredPast.isEmpty {
+        } else if filteredToday.isEmpty && filteredUpcoming.isEmpty && filteredPast.isEmpty {
             ContentUnavailableView.search(text: searchText)
         } else {
             List {
-                if !filteredActive.isEmpty {
-                    Section("events.section.active") {
-                        ForEach(filteredActive) { event in
+                if !filteredToday.isEmpty {
+                    Section("events.section.today") {
+                        ForEach(filteredToday) { event in
                             NavigationLink(value: event) {
-                                EventRow(event: event, isLive: event == events.first(where: { !$0.isPastEvent }))
+                                EventRow(event: event, isLive: true)
+                            }
+                        }
+                    }
+                }
+                if !filteredUpcoming.isEmpty {
+                    Section("events.section.upcoming") {
+                        ForEach(filteredUpcoming) { event in
+                            NavigationLink(value: event) {
+                                EventRow(event: event, isLive: false)
                             }
                         }
                     }
@@ -67,14 +76,16 @@ struct EventsListView: View {
         }
     }
 
-    private var filteredActive: [Event] {
-        let active = events.filter { !$0.isPastEvent }
-        return matchSearch(active)
+    private var filteredToday: [Event] {
+        matchSearch(events.filter { $0.timing == .today })
+    }
+
+    private var filteredUpcoming: [Event] {
+        matchSearch(events.filter { $0.timing == .upcoming })
     }
 
     private var filteredPast: [Event] {
-        let past = events.filter { $0.isPastEvent }
-        return matchSearch(past)
+        matchSearch(events.filter { $0.timing == .past })
     }
 
     private func matchSearch(_ src: [Event]) -> [Event] {

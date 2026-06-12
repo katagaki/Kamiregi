@@ -13,6 +13,7 @@ struct OshinagakiEditCanvas: View {
         GeometryReader { geo in
             ZStack {
                 background
+                Color.black.opacity(0.3)
 
                 ForEach(itemsWithRegions, id: \.persistentModelID) { item in
                     OshinagakiEditableRegion(
@@ -29,7 +30,6 @@ struct OshinagakiEditCanvas: View {
             .onTapGesture {
                 selectedItemID = nil
             }
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .stroke(Color(.separator), lineWidth: 0.5)
@@ -83,11 +83,11 @@ private struct OshinagakiEditableRegion: View {
 
     var body: some View {
         let liveRect = computeLiveRect()
-        let strokeColor: Color = isSelected ? Brand.tint : Brand.tint.opacity(0.6)
+        let strokeColor: Color = isSelected ? .white : .white.opacity(0.5)
 
         ZStack {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(isSelected ? Brand.tint.opacity(0.18) : Color.white.opacity(0.15))
+                .fill(isSelected ? .white.opacity(0.18) : .white.opacity(0.15))
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(strokeColor, style: StrokeStyle(lineWidth: 2, dash: isSelected ? [] : [4, 3]))
 
@@ -153,8 +153,7 @@ private struct OshinagakiEditableRegion: View {
 
     private func handle(at point: CGPoint, corner: Corner) -> some View {
         Circle()
-            .fill(.white)
-            .overlay(Circle().stroke(Brand.tint, lineWidth: 2))
+            .glassEffect(.clear.interactive(), in: .circle)
             .frame(width: 18, height: 18)
             .position(x: point.x, y: point.y)
             .gesture(resizeGesture(for: corner))

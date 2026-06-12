@@ -2,10 +2,12 @@ import SwiftUI
 import SwiftData
 
 struct ReservationsView: View {
+    @Environment(\.horizontalSizeClass) private var hSize
     @Bindable var event: Event
     @Bindable var day: EventDay
     @State private var filter: PickupFilter = .pending
     @State private var showAdd = false
+    @State private var editing: Reservation?
     @State private var searchText = ""
 
     enum PickupFilter: Hashable, CaseIterable {
@@ -33,7 +35,7 @@ struct ReservationsView: View {
             } else {
                 List {
                     ForEach(filtered, id: \.id) { res in
-                        ReservationRow(res: res)
+                        ReservationRow(res: res) { editing = res }
                     }
                 }
             }
@@ -42,30 +44,44 @@ struct ReservationsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: Text("reservations.search.prompt"))
         .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Menu("reservations.filter", systemImage: "line.3.horizontal.decrease") {
-                    Picker("reservations.filter", selection: $filter) {
-                        Label("reservations.filter.pending", systemImage: "clock").tag(PickupFilter.pending)
-                        Label("reservations.filter.done", systemImage: "checkmark.circle").tag(PickupFilter.done)
-                        Label("reservations.filter.all", systemImage: "list.bullet").tag(PickupFilter.all)
-                    }
-                    .pickerStyle(.inline)
-                    .labelsVisibility(.visible)
+            if hSize == .regular {
+                ToolbarItem(placement: .topBarTrailing) { filterMenu }
+                ToolbarItem(placement: .topBarTrailing) { addButton }
+            } else {
+                ToolbarItem(placement: .bottomBar) { filterMenu }
+                ToolbarSpacer(.fixed, placement: .bottomBar)
+                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                ToolbarSpacer(.fixed, placement: .bottomBar)
+                ToolbarItem(placement: .bottomBar) {
+                    addButton
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glassProminent)
                 }
-            }
-            ToolbarSpacer(.fixed, placement: .bottomBar)
-            DefaultToolbarItem(kind: .search, placement: .bottomBar)
-            ToolbarSpacer(.fixed, placement: .bottomBar)
-            ToolbarItem(placement: .bottomBar) {
-                Button { showAdd = true } label: {
-                    Label("reservations.add", systemImage: "plus")
-                }
-                .buttonBorderShape(.circle)
-                .buttonStyle(.glassProminent)
             }
         }
         .sheet(isPresented: $showAdd) {
-            AddReservationSheet(event: event, day: day)
+            ReservationSheet(event: event, day: day)
+        }
+        .sheet(item: $editing) { res in
+            ReservationSheet(event: event, day: day, reservation: res)
+        }
+    }
+
+    private var filterMenu: some View {
+        Menu("reservations.filter", systemImage: "line.3.horizontal.decrease") {
+            Picker("reservations.filter", selection: $filter) {
+                Label("reservations.filter.pending", systemImage: "clock").tag(PickupFilter.pending)
+                Label("reservations.filter.done", systemImage: "checkmark.circle").tag(PickupFilter.done)
+                Label("reservations.filter.all", systemImage: "list.bullet").tag(PickupFilter.all)
+            }
+            .pickerStyle(.inline)
+            .labelsVisibility(.visible)
+        }
+    }
+
+    private var addButton: some View {
+        Button { showAdd = true } label: {
+            Label("reservations.add", systemImage: "plus")
         }
     }
 
@@ -88,6 +104,7 @@ struct ReservationsView: View {
             $0.name.lowercased().contains(query)
                 || $0.handle.lowercased().contains(query)
                 || $0.note.lowercased().contains(query)
+                || $0.lines.contains { $0.displayName.lowercased().contains(query) }
         }
     }
 }

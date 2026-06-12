@@ -34,4 +34,23 @@ final class Event {
     var sortedDays: [EventDay] {
         days.sorted { $0.date < $1.date }
     }
+
+    // Derived from the event's days; falls back to the manual flag when no days exist.
+    var timing: EventTiming {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let dayStarts = days.map { calendar.startOfDay(for: $0.date) }
+        guard let first = dayStarts.min(), let last = dayStarts.max() else {
+            return isPastEvent ? .past : .upcoming
+        }
+        if today < first { return .upcoming }
+        if today > last { return .past }
+        return .today
+    }
+
+    var isLive: Bool { timing == .today }
+}
+
+enum EventTiming {
+    case today, upcoming, past
 }

@@ -22,17 +22,9 @@ struct TransactionRow: View {
                     .lineLimit(1)
             }
             Spacer(minLength: 8)
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(currency.format(transaction.total))
-                    .font(.body.weight(.bold))
-                    .monospacedDigit()
-                if transaction.change > 0 {
-                    Text(currency.format(transaction.change))
-                        .font(.caption2)
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                }
-            }
+            Text(currency.format(transaction.total))
+                .font(.body.weight(.bold))
+                .monospacedDigit()
         }
         .padding(.vertical, 2)
     }
