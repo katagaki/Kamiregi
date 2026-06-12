@@ -41,12 +41,13 @@ struct ItemsSetupView: View {
                 } label: {
                     Label("items.add", systemImage: "plus")
                 }
-                Button {
-                    copyFromPreviousDay()
-                } label: {
-                    Label("items.copy.previous", systemImage: "arrow.counterclockwise")
+                if hasPreviousDay {
+                    Button {
+                        copyFromPreviousDay()
+                    } label: {
+                        Label("items.copy.previous", systemImage: "arrow.counterclockwise")
+                    }
                 }
-                .disabled(!hasPreviousDay)
             } header: {
                 Text("items.section.title")
             } footer: {

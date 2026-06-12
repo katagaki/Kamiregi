@@ -37,7 +37,7 @@ struct SettingsMenu: View {
             }
 
             Section {
-                Link(destination: URL(string: "https://github.com/Kamicash")!) {
+                Link(destination: URL(string: "https://github.com/katagaki/Kamiregi")!) {
                     Label("settings.sourceCode", systemImage: "chevron.left.forwardslash.chevron.right")
                 }
             }
