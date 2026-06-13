@@ -3,11 +3,13 @@ import SwiftData
 
 struct ReservationsView: View {
     @Environment(\.horizontalSizeClass) private var hSize
+    @Environment(\.modelContext) private var context
     @Bindable var event: Event
     @Bindable var day: EventDay
     @State private var filter: PickupFilter = .pending
     @State private var showAdd = false
     @State private var editing: Reservation?
+    @State private var pendingDelete: Reservation?
     @State private var searchText = ""
 
     enum PickupFilter: Hashable, CaseIterable {
@@ -36,6 +38,13 @@ struct ReservationsView: View {
                 List {
                     ForEach(filtered, id: \.id) { res in
                         ReservationRow(res: res) { editing = res }
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    pendingDelete = res
+                                } label: {
+                                    Label("common.delete", systemImage: "trash")
+                                }
+                            }
                     }
                 }
             }
@@ -65,6 +74,27 @@ struct ReservationsView: View {
         .sheet(item: $editing) { res in
             ReservationSheet(event: event, day: day, reservation: res)
         }
+        .alert(
+            "reservations.delete.confirm.title",
+            isPresented: Binding(
+                get: { pendingDelete != nil },
+                set: { if !$0 { pendingDelete = nil } }
+            ),
+            presenting: pendingDelete
+        ) { res in
+            Button("common.delete", role: .destructive) {
+                delete(res)
+            }
+            Button("common.cancel", role: .cancel) {}
+        } message: { _ in
+            Text("reservations.delete.confirm.message")
+        }
+    }
+
+    private func delete(_ res: Reservation) {
+        day.reservations.removeAll { $0.id == res.id }
+        context.delete(res)
+        try? context.save()
     }
 
     private var filterMenu: some View {
