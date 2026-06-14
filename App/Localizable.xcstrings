@@ -164,6 +164,22 @@
         }
       }
     },
+    "common.no" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いいえ"
+          }
+        }
+      }
+    },
     "common.save" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -193,6 +209,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "検索"
+          }
+        }
+      }
+    },
+    "common.yes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はい"
           }
         }
       }
@@ -268,7 +300,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add day"
+            "value" : "Add Day"
           }
         },
         "ja" : {
@@ -380,7 +412,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete event"
+            "value" : "Delete Event"
           }
         },
         "ja" : {
@@ -623,7 +655,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add event"
+            "value" : "Add Event"
           }
         },
         "ja" : {
@@ -639,7 +671,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add your first event"
+            "value" : "Add Your First Event"
           }
         },
         "ja" : {
@@ -1033,7 +1065,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add item"
+            "value" : "Add Item"
           }
         },
         "ja" : {
@@ -1049,7 +1081,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copy from previous day"
+            "value" : "Copy from Previous Day"
           }
         },
         "ja" : {
@@ -1196,7 +1228,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clear all regions"
+            "value" : "Clear All Regions"
           }
         },
         "ja" : {
@@ -1212,7 +1244,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Change image"
+            "value" : "Change Image"
           }
         },
         "ja" : {
@@ -1228,7 +1260,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete this region"
+            "value" : "Delete This Region"
           }
         },
         "ja" : {
@@ -1260,7 +1292,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Set up menu sheet"
+            "value" : "Set Up Menu Sheet"
           }
         },
         "ja" : {
@@ -1356,7 +1388,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confirm sale"
+            "value" : "Confirm Sale"
           }
         },
         "ja" : {
@@ -1372,7 +1404,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Next sale"
+            "value" : "Next Sale"
           }
         },
         "ja" : {
@@ -1486,7 +1518,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clear all items"
+            "value" : "Clear All Items"
           }
         },
         "ja" : {
@@ -1536,7 +1568,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continue to payment"
+            "value" : "Continue to Payment"
           }
         },
         "ja" : {
@@ -1600,7 +1632,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add anyway"
+            "value" : "Add Anyway"
           }
         },
         "ja" : {
@@ -2120,13 +2152,61 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add reservation"
+            "value" : "Add Reservation"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "お取り置きを追加"
+          }
+        }
+      }
+    },
+    "reservations.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消す"
+          }
+        }
+      }
+    },
+    "reservations.cancel.confirm.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action cannot be undone."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この操作は元に戻せません。"
+          }
+        }
+      }
+    },
+    "reservations.cancel.confirm.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel this reservation?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このお取り置きを取り消しますか？"
           }
         }
       }

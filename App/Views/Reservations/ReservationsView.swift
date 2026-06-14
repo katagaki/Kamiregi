@@ -3,11 +3,13 @@ import SwiftData
 
 struct ReservationsView: View {
     @Environment(\.horizontalSizeClass) private var hSize
+    @Environment(\.modelContext) private var context
     @Bindable var event: Event
     @Bindable var day: EventDay
     @State private var filter: PickupFilter = .pending
     @State private var showAdd = false
     @State private var editing: Reservation?
+    @State private var pendingCancel: Reservation?
     @State private var searchText = ""
 
     enum PickupFilter: Hashable, CaseIterable {
@@ -36,6 +38,13 @@ struct ReservationsView: View {
                 List {
                     ForEach(filtered, id: \.id) { res in
                         ReservationRow(res: res) { editing = res }
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    pendingCancel = res
+                                } label: {
+                                    Label("reservations.cancel", systemImage: "xmark.circle")
+                                }
+                            }
                     }
                 }
             }
@@ -65,6 +74,27 @@ struct ReservationsView: View {
         .sheet(item: $editing) { res in
             ReservationSheet(event: event, day: day, reservation: res)
         }
+        .alert(
+            "reservations.cancel.confirm.title",
+            isPresented: Binding(
+                get: { pendingCancel != nil },
+                set: { if !$0 { pendingCancel = nil } }
+            ),
+            presenting: pendingCancel
+        ) { res in
+            Button("common.yes", role: .destructive) {
+                cancelReservation(res)
+            }
+            Button("common.no", role: .cancel) {}
+        } message: { _ in
+            Text("reservations.cancel.confirm.message")
+        }
+    }
+
+    private func cancelReservation(_ res: Reservation) {
+        day.reservations.removeAll { $0.id == res.id }
+        context.delete(res)
+        try? context.save()
     }
 
     private var filterMenu: some View {
