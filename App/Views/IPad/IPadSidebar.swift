@@ -6,6 +6,7 @@ enum IPadSection: Hashable, CaseIterable {
 }
 
 struct IPadSidebar: View {
+    @Environment(\.modelContext) private var context
     @Query(sort: \Event.createdAt, order: .forward) private var events: [Event]
     @Binding var selectedEventID: PersistentIdentifier?
     @Binding var selectedDayID: PersistentIdentifier?
@@ -13,6 +14,7 @@ struct IPadSidebar: View {
     @Binding var showAddEvent: Bool
     @State private var searchText = ""
     @State private var expandedEventID: PersistentIdentifier?
+    @State private var pendingDelete: Event?
 
     var body: some View {
         List {
@@ -42,6 +44,11 @@ struct IPadSidebar: View {
                         EventSidebarRow(event: event, isLive: event.isLive)
                             .contextMenu {
                                 ExportMenu(event: event, currentDay: exportDay(for: event))
+                                Section {
+                                    Button("event.delete", systemImage: "trash", role: .destructive) {
+                                        pendingDelete = event
+                                    }
+                                }
                             }
                     }
                 }
@@ -57,6 +64,22 @@ struct IPadSidebar: View {
         .onAppear {
             if expandedEventID == nil { expandedEventID = selectedEventID }
         }
+        .confirmationDialog(
+            "event.delete.confirm.title",
+            isPresented: Binding(
+                get: { pendingDelete != nil },
+                set: { if !$0 { pendingDelete = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: pendingDelete
+        ) { event in
+            Button("event.delete", role: .destructive) {
+                deleteEvent(event)
+            }
+            Button("common.cancel", role: .cancel) {}
+        } message: { _ in
+            Text("event.delete.confirm.message")
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 SettingsMenu()
@@ -67,6 +90,18 @@ struct IPadSidebar: View {
                 }
             }
         }
+    }
+
+    private func deleteEvent(_ event: Event) {
+        if selectedEventID == event.persistentModelID {
+            selectedEventID = nil
+            selectedDayID = nil
+        }
+        if expandedEventID == event.persistentModelID {
+            expandedEventID = nil
+        }
+        context.delete(event)
+        try? context.save()
     }
 
     // Tapping an event toggles its expansion; only a sub-nav button navigates.
