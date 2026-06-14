@@ -15,6 +15,7 @@ struct IPadRegisterView: View {
     @State private var photosPick: PhotosPickerItem?
     @State private var showPhotoPicker = false
     @State private var showClearConfirm = false
+    @State private var flight = CartFlightController()
 
     var body: some View {
         GeometryReader { geo in
@@ -23,15 +24,23 @@ struct IPadRegisterView: View {
                 main
                 if !compact {
                     Divider()
-                    cartPane.frame(width: 320)
+                    cartPane
+                        .frame(width: 320)
+                        .reportGlobalFrame { flight.sidebarListAnchor = $0 }
                 }
             }
             .overlay(alignment: .bottomTrailing) {
                 if compact && cart.count > 0 {
-                    POSCartBar(cart: cart) { showPayment = true }
+                    POSCartBar(cart: cart, flight: flight) { showPayment = true }
                         .frame(maxWidth: 400)
                         .padding()
                 }
+            }
+            .overlay {
+                CartFlightOverlay(controller: flight)
+            }
+            .onChange(of: compact) { _, isCompact in
+                if isCompact { flight.sidebarListAnchor = .zero }
             }
         }
         .background(Color(.systemGroupedBackground))
@@ -119,6 +128,7 @@ struct IPadRegisterView: View {
                         ) {
                             ForEach(sortedItems, id: \.id) { item in
                                 POSGridCard(item: item, day: day, cart: cart) { tap(item) }
+                                    .reportGlobalFrame { flight.sourceAnchors[item.persistentModelID] = $0 }
                             }
                         }
                         .padding(20)
@@ -129,7 +139,13 @@ struct IPadRegisterView: View {
                     ContentUnavailableView("pos.title", systemImage: "cart")
                 } else {
                     List(sortedItems, id: \.id) { item in
-                        POSListRow(item: item, day: day, cart: cart) { tap(item) }
+                        POSListRow(
+                            item: item,
+                            day: day,
+                            cart: cart,
+                            onThumbFrame: { flight.sourceAnchors[item.persistentModelID] = $0 },
+                            onAdd: { tap(item) }
+                        )
                     }
                     .listStyle(.plain)
                 }
@@ -139,7 +155,7 @@ struct IPadRegisterView: View {
                     items: event.items,
                     day: day,
                     cart: cart,
-                    onTap: tap
+                    onTap: { item, rect in tapOshinagaki(item, rect) }
                 )
             }
         }
@@ -171,7 +187,7 @@ struct IPadRegisterView: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(Array(cart.lines.enumerated()), id: \.element.id) { idx, line in
-                            CartLineRow(line: line, cart: cart)
+                            CartLineRow(line: line, cart: cart, flight: flight)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
                             if idx < cart.lines.count - 1 {
@@ -203,11 +219,6 @@ struct IPadRegisterView: View {
         }
     }
 
-    private func tap(_ item: InventoryItem) {
-        let remaining = max(0, item.available(on: day) - cart.qty(for: item))
-        if remaining == 0 { oosItem = item } else { cart.add(item) }
-    }
-
     private func loadPhoto(_ item: PhotosPickerItem?) async {
         guard let item else { return }
         if let data = try? await item.loadTransferable(type: Data.self) {
@@ -221,5 +232,43 @@ struct IPadRegisterView: View {
     private func clearAllRegions() {
         for item in event.items { item.regionRect = .zero }
         try? context.save()
+    }
+}
+
+private extension IPadRegisterView {
+    func tap(_ item: InventoryItem) {
+        let rect = flight.sourceAnchors[item.persistentModelID] ?? .zero
+        let corner: CGFloat = mode == .grid ? 16 : 10
+        addToCart(item, from: rect, corner: corner, visual: CartFlightFactory.visual(for: item))
+    }
+
+    func tapOshinagaki(_ item: InventoryItem, _ rect: CGRect) {
+        addToCart(
+            item,
+            from: rect,
+            corner: 12,
+            visual: CartFlightFactory.oshinagakiVisual(for: item, background: event.oshinagakiImage),
+            fadeOnly: true
+        )
+    }
+
+    func addToCart(
+        _ item: InventoryItem,
+        from rect: CGRect,
+        corner: CGFloat,
+        visual: FlyVisual,
+        fadeOnly: Bool = false
+    ) {
+        let remaining = max(0, item.available(on: day) - cart.qty(for: item))
+        if remaining == 0 { oosItem = item; return }
+        cart.add(item)
+        guard rect != .zero else { return }
+        flight.launch(CartFlight(
+            visual: visual,
+            start: rect,
+            corner: corner,
+            fadeOnly: fadeOnly,
+            targetItemID: item.persistentModelID
+        ))
     }
 }

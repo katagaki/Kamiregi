@@ -4,9 +4,16 @@ struct CartLineRow: View {
     @AppStorage("currency") private var currency: Currency = .yen
     var line: CartItem
     @Bindable var cart: CartStore
+    var flight: CartFlightController?
+    @State private var pulse = false
 
     private var liveQty: Int {
         cart.lines.first(where: { $0.id == line.id })?.qty ?? line.qty
+    }
+
+    private var pulseToken: Int {
+        guard let id = line.itemID else { return 0 }
+        return flight?.rowPulseTokens[id] ?? 0
     }
 
     var body: some View {
@@ -53,5 +60,13 @@ struct CartLineRow: View {
             }
         }
         .padding(.vertical, 2)
+        .scaleEffect(pulse ? 1.06 : 1)
+        .reportGlobalFrame { rect in
+            if let id = line.itemID { flight?.sidebarRowAnchors[id] = rect }
+        }
+        .onChange(of: pulseToken) { _, _ in
+            withAnimation(.spring(response: 0.18, dampingFraction: 0.5)) { pulse = true }
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6).delay(0.12)) { pulse = false }
+        }
     }
 }

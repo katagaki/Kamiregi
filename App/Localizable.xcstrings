@@ -1352,6 +1352,7 @@
       }
     },
     "oshinagaki.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1724,6 +1725,7 @@
       }
     },
     "pos.view.display" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1740,6 +1742,7 @@
       }
     },
     "pos.view.grid" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1756,6 +1759,7 @@
       }
     },
     "pos.view.list" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

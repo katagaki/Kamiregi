@@ -13,6 +13,7 @@ struct RegisterView: View {
     @State private var showEdit = false
     @State private var oosItem: InventoryItem?
     @State private var cart = CartStore()
+    @State private var flight = CartFlightController()
 
     var body: some View {
         ZStack {
@@ -31,7 +32,10 @@ struct RegisterView: View {
             Color.clear.frame(height: POSCartBar.collapsedHeight)
         }
         .overlay(alignment: .bottom) {
-            POSCartBar(cart: cart) { showPayment = true }
+            POSCartBar(cart: cart, flight: flight) { showPayment = true }
+        }
+        .overlay {
+            CartFlightOverlay(controller: flight)
         }
         .navigationTitle("pos.title")
         .navigationBarTitleDisplayMode(.inline)
@@ -82,6 +86,7 @@ struct RegisterView: View {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 220), spacing: 12)], spacing: 12) {
                 ForEach(sortedItems, id: \.id) { item in
                     POSGridCard(item: item, day: day, cart: cart) { tap(item) }
+                        .reportGlobalFrame { flight.sourceAnchors[item.persistentModelID] = $0 }
                 }
             }
             .padding(16)
@@ -91,7 +96,13 @@ struct RegisterView: View {
 
     private var listContent: some View {
         List(sortedItems, id: \.id) { item in
-            POSListRow(item: item, day: day, cart: cart) { tap(item) }
+            POSListRow(
+                item: item,
+                day: day,
+                cart: cart,
+                onThumbFrame: { flight.sourceAnchors[item.persistentModelID] = $0 },
+                onAdd: { tap(item) }
+            )
         }
         .listStyle(.plain)
     }
@@ -115,13 +126,44 @@ struct RegisterView: View {
                 items: event.items,
                 day: day,
                 cart: cart,
-                onTap: tap
+                onTap: { item, rect in tapOshinagaki(item, rect) }
             )
         }
     }
 
     private func tap(_ item: InventoryItem) {
+        let rect = flight.sourceAnchors[item.persistentModelID] ?? .zero
+        let corner: CGFloat = mode == .grid ? 16 : 10
+        addToCart(item, from: rect, corner: corner, visual: CartFlightFactory.visual(for: item))
+    }
+
+    private func tapOshinagaki(_ item: InventoryItem, _ rect: CGRect) {
+        addToCart(
+            item,
+            from: rect,
+            corner: 12,
+            visual: CartFlightFactory.oshinagakiVisual(for: item, background: event.oshinagakiImage),
+            fadeOnly: true
+        )
+    }
+
+    private func addToCart(
+        _ item: InventoryItem,
+        from rect: CGRect,
+        corner: CGFloat,
+        visual: FlyVisual,
+        fadeOnly: Bool = false
+    ) {
         let remaining = max(0, item.available(on: day) - cart.qty(for: item))
-        if remaining == 0 { oosItem = item } else { cart.add(item) }
+        if remaining == 0 { oosItem = item; return }
+        cart.add(item)
+        guard rect != .zero else { return }
+        flight.launch(CartFlight(
+            visual: visual,
+            start: rect,
+            corner: corner,
+            fadeOnly: fadeOnly,
+            targetItemID: item.persistentModelID
+        ))
     }
 }

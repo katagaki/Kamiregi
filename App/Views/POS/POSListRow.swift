@@ -5,6 +5,7 @@ struct POSListRow: View {
     @Bindable var item: InventoryItem
     var day: EventDay
     var cart: CartStore
+    var onThumbFrame: ((CGRect) -> Void)?
     var onAdd: () -> Void
 
     var body: some View {
@@ -13,6 +14,7 @@ struct POSListRow: View {
         Button(action: onAdd) {
             HStack(spacing: 12) {
                 ItemThumbnail(name: item.name, photoData: item.photoData)
+                    .reportGlobalFrame { onThumbFrame?($0) }
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 8) {
                         Text(item.name)

@@ -18,7 +18,7 @@ struct ZoomableOshinagakiCanvas: View {
     var items: [InventoryItem]
     var day: EventDay
     var cart: CartStore
-    var onTap: (InventoryItem) -> Void
+    var onTap: (InventoryItem, CGRect) -> Void
 
     var body: some View {
         ZoomableScrollView(aspect: OshinagakiLayout.aspect(for: imageData)) {
@@ -38,7 +38,7 @@ struct OshinagakiCanvas: View {
     var items: [InventoryItem]
     var day: EventDay
     var cart: CartStore
-    var onTap: (InventoryItem) -> Void
+    var onTap: (InventoryItem, CGRect) -> Void
 
     var body: some View {
         GeometryReader { geo in
@@ -52,7 +52,7 @@ struct OshinagakiCanvas: View {
                         width: rect.width * geo.size.width,
                         height: rect.height * geo.size.height
                     )
-                    OshinagakiTapRegion(item: item, day: day, cart: cart, onTap: { onTap(item) })
+                    OshinagakiTapRegion(item: item, day: day, cart: cart, onTap: { onTap(item, $0) })
                         .frame(width: frame.width, height: frame.height)
                         .position(x: frame.midX, y: frame.midY)
                 }
@@ -81,7 +81,7 @@ private struct OshinagakiTapRegion: View {
     @Bindable var item: InventoryItem
     var day: EventDay
     var cart: CartStore
-    var onTap: () -> Void
+    var onTap: (CGRect) -> Void
     @State private var isPressed = false
 
     var body: some View {
@@ -113,7 +113,7 @@ private struct OshinagakiTapRegion: View {
 }
 
 private struct SingleTouchTapView: UIViewRepresentable {
-    var onTap: () -> Void
+    var onTap: (CGRect) -> Void
     var onPressChange: (Bool) -> Void
 
     func makeCoordinator() -> Coordinator {
@@ -126,7 +126,7 @@ private struct SingleTouchTapView: UIViewRepresentable {
         view.onPressChange = onPressChange
         let tap = UITapGestureRecognizer(
             target: context.coordinator,
-            action: #selector(Coordinator.handleTap)
+            action: #selector(Coordinator.handleTap(_:))
         )
         tap.numberOfTapsRequired = 1
         tap.numberOfTouchesRequired = 1
@@ -140,14 +140,15 @@ private struct SingleTouchTapView: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject {
-        var onTap: () -> Void
+        var onTap: (CGRect) -> Void
 
-        init(onTap: @escaping () -> Void) {
+        init(onTap: @escaping (CGRect) -> Void) {
             self.onTap = onTap
         }
 
-        @objc func handleTap() {
-            onTap()
+        @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+            let rect = gesture.view.map { $0.convert($0.bounds, to: nil) } ?? .zero
+            onTap(rect)
         }
     }
 }

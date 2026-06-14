@@ -8,9 +8,11 @@ struct POSCartBar: View {
 
     @AppStorage("currency") private var currency: Currency = .yen
     @Bindable var cart: CartStore
+    var flight: CartFlightController?
     var onCheckout: () -> Void
     @State private var isExpanded = false
     @State private var showClearConfirm = false
+    @State private var bounce: CGFloat = 0
 
     var body: some View {
         GlassEffectContainer(spacing: 8) {
@@ -21,12 +23,17 @@ struct POSCartBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
+        .offset(y: bounce)
         .contentShape(Rectangle())
         .onTapGesture {}
         .onChange(of: cart.lines.isEmpty) { _, isEmpty in
             if isEmpty {
                 withAnimation(.smooth.speed(2.0)) { isExpanded = false }
             }
+        }
+        .onChange(of: flight?.bounceToken) { _, _ in
+            withAnimation(.spring(response: 0.16, dampingFraction: 0.5)) { bounce = 12 }
+            withAnimation(.spring(response: 0.45, dampingFraction: 0.55).delay(0.12)) { bounce = 0 }
         }
         .alert(
             "pos.cart.clear.confirm.title",
@@ -134,6 +141,7 @@ struct POSCartBar: View {
             }
         }
         .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 28))
+        .reportGlobalFrame { flight?.cartBarAnchor = $0 }
         .contextMenu {
             Button("pos.cart.clear.all", systemImage: "trash", role: .destructive) {
                 showClearConfirm = true
