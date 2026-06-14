@@ -9,7 +9,7 @@ struct ReservationsView: View {
     @State private var filter: PickupFilter = .pending
     @State private var showAdd = false
     @State private var editing: Reservation?
-    @State private var pendingDelete: Reservation?
+    @State private var pendingCancel: Reservation?
     @State private var searchText = ""
 
     enum PickupFilter: Hashable, CaseIterable {
@@ -40,9 +40,9 @@ struct ReservationsView: View {
                         ReservationRow(res: res) { editing = res }
                             .swipeActions(edge: .trailing) {
                                 Button(role: .destructive) {
-                                    pendingDelete = res
+                                    pendingCancel = res
                                 } label: {
-                                    Label("common.delete", systemImage: "trash")
+                                    Label("reservations.cancel", systemImage: "xmark.circle")
                                 }
                             }
                     }
@@ -75,23 +75,23 @@ struct ReservationsView: View {
             ReservationSheet(event: event, day: day, reservation: res)
         }
         .alert(
-            "reservations.delete.confirm.title",
+            "reservations.cancel.confirm.title",
             isPresented: Binding(
-                get: { pendingDelete != nil },
-                set: { if !$0 { pendingDelete = nil } }
+                get: { pendingCancel != nil },
+                set: { if !$0 { pendingCancel = nil } }
             ),
-            presenting: pendingDelete
+            presenting: pendingCancel
         ) { res in
-            Button("common.delete", role: .destructive) {
-                delete(res)
+            Button("common.yes", role: .destructive) {
+                cancelReservation(res)
             }
-            Button("common.cancel", role: .cancel) {}
+            Button("common.no", role: .cancel) {}
         } message: { _ in
-            Text("reservations.delete.confirm.message")
+            Text("reservations.cancel.confirm.message")
         }
     }
 
-    private func delete(_ res: Reservation) {
+    private func cancelReservation(_ res: Reservation) {
         day.reservations.removeAll { $0.id == res.id }
         context.delete(res)
         try? context.save()
